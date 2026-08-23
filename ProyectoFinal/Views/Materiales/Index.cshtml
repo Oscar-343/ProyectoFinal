@@ -1,0 +1,64 @@
+﻿@model IEnumerable<ProyectoFinal.Models.material>
+
+<h1>Gestión de Materiales</h1>
+<p>
+    Aquí puede consultar y administrar los materiales
+    utilizados para fabricar los amigurumis.
+</p>
+
+<a asp-action="Create" class="btn btn-primary">
+    + Registrar nuevo material
+</a>
+<br />
+<br />
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Material</th>
+            <th>Tipo</th>
+            <th>Color</th>
+            <th>Unidad</th>
+            <th>Cantidad</th>
+            <th>Precio</th>
+            <th>Stock mínimo</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Nombre</td>
+                <td>@item.Tipo</td>
+                <td>@item.Color</td>
+                <td>@item.UnidadMedida</td>
+                <td>@item.CantidadDisponible</td>
+                <td>Bs. @item.PrecioUnitario</td>
+                <td>@item.StockMinimo</td>
+                <td>
+                    @if (item.Estado == "stock agotado")
+                    {
+                        <span style="color:red;">🔴 Sin stock</span>
+                    }
+                    else if (item.Estado == "stock bajo")
+                    {
+                        <span style="color:orange;">⚠ Stock bajo</span>
+                    }
+                    else
+                    {
+                        <span style="color:green;">✓ Disponible</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.IdMaterial">Ver</a>
+                    |
+                    <a asp-action="Edit" asp-route-id="@item.IdMaterial">Editar</a>
+                    |
+                    <a asp-action="Delete" asp-route-id="@item.IdMaterial">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -11,9 +11,7 @@ namespace ProyectoFinal.Data
         }
 
         public DbSet<material> Material { get; set; }
-        public DbSet<modelo> Modelo { get; set; }
-        public DbSet<modelo_material> Modelo_Material { get; set; }
-        public DbSet<usuario> Usuarios { get; set; }
+       
         // Agreguen aquí las entidades que falten
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
