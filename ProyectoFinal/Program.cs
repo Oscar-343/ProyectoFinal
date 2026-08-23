@@ -10,5 +10,22 @@ builder.Services.AddDbContext<TiendaDbContext>(options =>
 
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddSession();
+
 var app = builder.Build();
-//resto del pipeline
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+
+
+app.UseSession();
+
+app.UseRouting();
+
+app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Account}/{action=Login}/{id?}");
+
+app.Run();

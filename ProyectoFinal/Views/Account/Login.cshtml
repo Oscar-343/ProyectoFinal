@@ -1,0 +1,24 @@
+﻿@model ProyectoFinal.Models.LoginViewModel
+
+@{
+    ViewData["Title"] = "Iniciar Sesión";
+}
+
+<h2> Sistemas de registro Amigurumis Luna - Ingreso</h2>
+
+@if (ViewBag.Error != null)
+{
+    <p style="color:red">@ViewBag.Error</p>
+}
+
+<form asp-controller="Account" asp-action="Login" method="post">
+    <div>
+        <label>Usuario</label>
+        <input asp-for="NombreUsuario" />
+    </div>
+    <div>
+        <label>Contraseña</label>
+        <input asp-for="Password" type="password" />
+    </div>
+    <button type="submit">Ingresar</button>
+</form>
