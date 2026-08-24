@@ -1,8 +1,89 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model ProyectoFinal.Models.HomeDashboardViewModel
+@{
+    ViewData["Title"] = "Inicio";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Jair puto</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<link rel="stylesheet" href="~/css/amigurumis.css" />
+
+<h2 class="titulo">Amigurumis Luna — panel de administración</h2>
+<p style="color:#777;font-size:14px;margin-top:-6px">Sesión activa: @ViewBag.NombreUsuario</p>
+
+<!-- Métricas generales -->
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:1.25rem 0">
+    <div class="card-modelo" style="padding:1rem">
+        <p style="font-size:12px;color:#999;margin:0">Modelos registrados</p>
+        <p style="font-size:24px;font-weight:700;margin:4px 0 0">@Model.TotalModelos</p>
+    </div>
+    <div class="card-modelo" style="padding:1rem">
+        <p style="font-size:12px;color:#999;margin:0">Materiales registrados</p>
+        <p style="font-size:24px;font-weight:700;margin:4px 0 0">@Model.TotalMateriales</p>
+    </div>
+    <div class="card-modelo" style="padding:1rem">
+        <p style="font-size:12px;color:#999;margin:0">Materiales por acabarse</p>
+        <p style="font-size:24px;font-weight:700;margin:4px 0 0;color:#C62828">@Model.MaterialesPorAcabarse.Count</p>
+    </div>
+</div>
+
+<!-- Materiales por acabarse -->
+<div class="card-modelo" style="padding:1rem;margin-bottom:1.25rem">
+    <h5 class="titulo" style="margin-top:0">Materiales por acabarse</h5>
+
+    @if (Model.MaterialesPorAcabarse.Any())
+    {
+        <table class="table" style="width:100%;font-size:13px">
+            <thead>
+                <tr>
+                    <th>Material</th>
+                    <th>Disponible</th>
+                    <th>Stock mínimo</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var mat in Model.MaterialesPorAcabarse)
+                {
+                    <tr>
+                        <td>@mat.Nombre</td>
+                        <td style="color:#C62828">@mat.CantidadDisponible @mat.UnidadMedida</td>
+                        <td>@mat.StockMinimo @mat.UnidadMedida</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p style="font-size:13px;color:#777">Ningún material está por debajo de su stock mínimo.</p>
+    }
+</div>
+
+<!-- Modelos más vendidos (placeholder, sprint futuro) -->
+<div class="card-modelo" style="padding:1rem;margin-bottom:1.25rem;opacity:0.7">
+    <h5 class="titulo" style="margin-top:0">Modelos más vendidos</h5>
+    <p style="font-size:13px;color:#777">
+        Disponible cuando se implemente el módulo de ventas/pedidos (próximo sprint).
+    </p>
+</div>
+
+<!-- Navegación a módulos ya construidos -->
+<h5 class="titulo">Módulos</h5>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:1.5rem">
+    <a asp-controller="Modelo" asp-action="Index" class="btn-pastel" style="text-align:center;text-decoration:none;display:block">Modelos</a>
+    <a asp-controller="Materiales" asp-action="Index" class="btn-pastel" style="text-align:center;text-decoration:none;display:block">Materiales</a>
+    <a asp-controller="Modelo" asp-action="Catalogo" class="btn-pastel" style="text-align:center;text-decoration:none;display:block">Catálogo tienda</a>
+</div>
+
+<!-- Próximos sprints: placeholders deshabilitados, listos para conectar después -->
+<h5 class="titulo">Próximamente</h5>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">
+
+    <!-- TODO: cuando exista VentasController, cambia el <span> por:
+         <a asp-controller="Ventas" asp-action="Index" class="btn-pastel" style="text-align:center;text-decoration:none;display:block">Ventas</a> -->
+    <span class="btn-pastel" style="text-align:center;display:block;opacity:0.5;cursor:not-allowed">Ventas</span>
+
+    <!-- TODO: cuando exista PedidosController, cambia el <span> por el <a> correspondiente -->
+    <span class="btn-pastel" style="text-align:center;display:block;opacity:0.5;cursor:not-allowed">Pedidos pendientes</span>
+
+    <!-- TODO: agregar más accesos aquí conforme avancen los sprints (reportes, clientes, etc.) -->
+    <span class="btn-pastel" style="text-align:center;display:block;opacity:0.5;cursor:not-allowed">Reportes</span>
+
 </div>

@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProyectoFinal.Data;
 using ProyectoFinal.Models;
+using ProyectoFinal.Filters;
 
 namespace ProyectoFinal.Controllers
 {
+    [RequiereSesion]
     // Controlador encargado de gestionar los materiales.
     public class MaterialesController : Controller
     {

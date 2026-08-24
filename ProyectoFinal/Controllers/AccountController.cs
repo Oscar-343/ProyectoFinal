@@ -23,7 +23,7 @@ namespace ProyectoFinal.Controllers
         [HttpPost]
         public IActionResult Login(LoginViewModel model)
         {
-            var usuario = _context.Usuarios.FirstOrDefault(u =>
+            var usuario = _context.Usuario.FirstOrDefault(u =>
                 u.NombreUsuario == model.NombreUsuario &&
                 u.Password == model.Password);
 

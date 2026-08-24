@@ -95,3 +95,86 @@ h1, h2, h3, .titulo {
     font-family: 'Comfortaa', sans-serif;
     font-size: 13px;
 }
+.badge-estado {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    display: inline-block;
+}
+
+    .badge-estado.disponible {
+        background-color: var(--celeste);
+        color: #01579B;
+    }
+
+    .badge-estado.bajo {
+        background-color: var(--rosa);
+        color: #880E4F;
+    }
+
+    .badge-estado.agotado {
+        background-color: var(--lila);
+        color: #4A148C;
+    }
+
+.tabla-pastel {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    background-color: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--gris);
+}
+
+    .tabla-pastel th {
+        background-color: var(--gris);
+        font-family: 'Comfortaa', sans-serif;
+        text-align: left;
+        padding: 10px 12px;
+    }
+
+    .tabla-pastel td {
+        padding: 10px 12px;
+        border-top: 1px solid var(--gris);
+    }
+
+    .tabla-pastel a {
+        color: var(--lila);
+        text-decoration: none;
+    }
+
+        .tabla-pastel a:hover {
+            text-decoration: underline;
+        }
+
+.form-pastel label {
+    font-size: 13px;
+    color: #777;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.form-pastel small {
+    font-size: 11px;
+    color: #999;
+    display: block;
+    margin-top: 2px;
+}
+
+.btn-secundario {
+    font-family: 'Quicksand', sans-serif;
+    background-color: var(--gris);
+    border: none;
+    border-radius: 10px;
+    padding: 8px 16px;
+    color: #444;
+    text-decoration: none;
+    display: inline-block;
+}
+
+    .btn-secundario:hover {
+        background-color: var(--celeste);
+        color: #01579B;
+    }

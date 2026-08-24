@@ -6,7 +6,6 @@ namespace ProyectoFinal.Models
     [Table("modelo")]
     public class Modelo
     {
-        // Porcentaje de ganancia aplicado sobre el costo (1.5 = 50% de ganancia)
         public const decimal PORCENTAJE_GANANCIA = 1.5m;
 
         [Key]
@@ -35,9 +34,6 @@ namespace ProyectoFinal.Models
         [Column("tiempo_produccion", TypeName = "decimal(5,2)")]
         public decimal TiempoProduccion { get; set; }
 
-        // Ya no se ingresan a mano: se calculan en el controlador
-        // a partir de los materiales seleccionados, y se guardan
-        // en la BD para no recalcular cada vez que se lista el catálogo.
         [Column("costo", TypeName = "decimal(8,2)")]
         public decimal Costo { get; set; }
 
@@ -47,10 +43,6 @@ namespace ProyectoFinal.Models
         [NotMapped]
         public decimal Utilidad => PrecioVenta - Costo;
 
-        // TODO: descomentar cuando exista la tabla/CRUD de Material.
-        // Relación con los materiales usados en este modelo, cada uno con su cantidad.
-        // [NotMapped] no aplica aquí porque sí queremos que EF Core la mapee.
-        //
-        // public ICollection<ModeloMaterial> ModeloMateriales { get; set; } = new List<ModeloMaterial>();
+        public ICollection<ModeloMaterial> ModeloMateriales { get; set; } = new List<ModeloMaterial>();
     }
 }

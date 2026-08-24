@@ -1,18 +1,19 @@
 ﻿@model IEnumerable<ProyectoFinal.Models.material>
 
-<h1>Gestión de Materiales</h1>
-<p>
-    Aquí puede consultar y administrar los materiales
-    utilizados para fabricar los amigurumis.
+<link rel="stylesheet" href="~/css/amigurumis.css" />
+
+<h2 class="titulo">Gestión de materiales</h2>
+<p style="color:#777;font-size:14px">
+    Aquí puede consultar y administrar los materiales utilizados para fabricar los amigurumis.
 </p>
 
-<a asp-action="Create" class="btn btn-primary">
+<a asp-action="Create" class="btn-pastel" style="text-decoration:none;display:inline-block">
     + Registrar nuevo material
 </a>
 <br />
 <br />
 
-<table class="table table-bordered">
+<table class="tabla-pastel">
     <thead>
         <tr>
             <th>Material</th>
@@ -40,15 +41,15 @@
                 <td>
                     @if (item.Estado == "stock agotado")
                     {
-                        <span style="color:red;">🔴 Sin stock</span>
+                        <span class="badge-estado agotado">Sin stock</span>
                     }
                     else if (item.Estado == "stock bajo")
                     {
-                        <span style="color:orange;">⚠ Stock bajo</span>
+                        <span class="badge-estado bajo">Stock bajo</span>
                     }
                     else
                     {
-                        <span style="color:green;">✓ Disponible</span>
+                        <span class="badge-estado disponible">Disponible</span>
                     }
                 </td>
                 <td>

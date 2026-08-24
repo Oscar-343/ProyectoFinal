@@ -2,9 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using ProyectoFinal.Data;
 using ProyectoFinal.Models;
+using ProyectoFinal.Filters;
 
 namespace ProyectoFinal.Controllers
 {
+    [RequiereSesion]
     public class ModeloController : Controller
     {
         private readonly TiendaDbContext _context;
@@ -29,26 +31,32 @@ namespace ProyectoFinal.Controllers
         }
 
         // GET: Modelo/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            // TODO: cuando exista la tabla Material, cargar la lista para el <select>:
-            // ViewBag.Materiales = await _context.Material.ToListAsync();
+            ViewBag.Materiales = await _context.Material.ToListAsync();
             return View();
         }
 
         // POST: Modelo/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Modelo modelo /*, List<int> materialesSeleccionados, List<decimal> cantidades */)
+        public async Task<IActionResult> Create(Modelo modelo, List<int> materialesSeleccionados, List<decimal> cantidades)
         {
             if (!ModelState.IsValid)
+            {
+                ViewBag.Materiales = await _context.Material.ToListAsync();
                 return View(modelo);
+            }
 
-            modelo.Costo = await CalcularCostoAsync(/* materialesSeleccionados, cantidades */);
+            modelo.Costo = await CalcularCostoAsync(materialesSeleccionados, cantidades);
             modelo.PrecioVenta = modelo.Costo * Modelo.PORCENTAJE_GANANCIA;
 
             _context.Add(modelo);
+            await _context.SaveChangesAsync(); // Necesario primero para tener modelo.IdModelo generado.
+
+            AgregarModeloMateriales(modelo.IdModelo, materialesSeleccionados, cantidades);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -60,9 +68,12 @@ namespace ProyectoFinal.Controllers
             var modelo = await _context.Modelo.FindAsync(id);
             if (modelo == null) return NotFound();
 
-            // TODO: cuando exista Material, cargar también la lista y los materiales
-            // ya seleccionados para este modelo (desde ModeloMateriales).
-            // ViewBag.Materiales = await _context.Material.ToListAsync();
+            ViewBag.Materiales = await _context.Material.ToListAsync();
+
+            // Materiales ya asociados a este modelo, para precargarlos en la vista.
+            ViewBag.MaterialesSeleccionadosActuales = await _context.ModeloMaterial
+                .Where(mm => mm.IdModelo == id)
+                .ToListAsync();
 
             return View(modelo);
         }
@@ -70,17 +81,29 @@ namespace ProyectoFinal.Controllers
         // POST: Modelo/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Modelo modelo /*, List<int> materialesSeleccionados, List<decimal> cantidades */)
+        public async Task<IActionResult> Edit(int id, Modelo modelo, List<int> materialesSeleccionados, List<decimal> cantidades)
         {
             if (id != modelo.IdModelo) return NotFound();
-            if (!ModelState.IsValid) return View(modelo);
 
-            modelo.Costo = await CalcularCostoAsync(/* materialesSeleccionados, cantidades */);
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Materiales = await _context.Material.ToListAsync();
+                return View(modelo);
+            }
+
+            modelo.Costo = await CalcularCostoAsync(materialesSeleccionados, cantidades);
             modelo.PrecioVenta = modelo.Costo * Modelo.PORCENTAJE_GANANCIA;
 
             try
             {
                 _context.Update(modelo);
+
+                // Reemplaza las asociaciones anteriores por las nuevas seleccionadas.
+                var anteriores = _context.ModeloMaterial.Where(mm => mm.IdModelo == id);
+                _context.ModeloMaterial.RemoveRange(anteriores);
+
+                AgregarModeloMateriales(id, materialesSeleccionados, cantidades);
+
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -111,6 +134,10 @@ namespace ProyectoFinal.Controllers
             var modelo = await _context.Modelo.FindAsync(id);
             if (modelo != null)
             {
+                // Elimina primero las asociaciones para no violar la llave foránea.
+                var relaciones = _context.ModeloMaterial.Where(mm => mm.IdModelo == id);
+                _context.ModeloMaterial.RemoveRange(relaciones);
+
                 _context.Modelo.Remove(modelo);
                 await _context.SaveChangesAsync();
             }
@@ -122,24 +149,37 @@ namespace ProyectoFinal.Controllers
             return _context.Modelo.Any(e => e.IdModelo == id);
         }
 
-        // Calcula el costo sumando (precio_unitario x cantidad) de cada material elegido.
-        // Por ahora devuelve 0 porque la tabla Material todavía no existe.
-        //
-        // TODO: reemplazar el cuerpo de este método cuando exista Material, así:
-        //
-        // private async Task<decimal> CalcularCostoAsync(List<int> materialesSeleccionados, List<decimal> cantidades)
-        // {
-        //     decimal costo = 0;
-        //     for (int i = 0; i < materialesSeleccionados.Count; i++)
-        //     {
-        //         var material = await _context.Material.FindAsync(materialesSeleccionados[i]);
-        //         costo += material.PrecioUnitario * cantidades[i];
-        //     }
-        //     return costo;
-        // }
-        private Task<decimal> CalcularCostoAsync()
+        // Suma (precio_unitario x cantidad) de cada material elegido.
+        private async Task<decimal> CalcularCostoAsync(List<int> materialesSeleccionados, List<decimal> cantidades)
         {
-            return Task.FromResult(0m);
+            if (materialesSeleccionados == null || cantidades == null)
+                return 0;
+
+            decimal costo = 0;
+            for (int i = 0; i < materialesSeleccionados.Count; i++)
+            {
+                var material = await _context.Material.FindAsync(materialesSeleccionados[i]);
+                if (material != null)
+                    costo += material.PrecioUnitario * cantidades[i];
+            }
+            return costo;
+        }
+
+        // Crea las filas de ModeloMaterial en memoria (se guardan con el SaveChangesAsync siguiente).
+        private void AgregarModeloMateriales(int idModelo, List<int> materialesSeleccionados, List<decimal> cantidades)
+        {
+            if (materialesSeleccionados == null || cantidades == null)
+                return;
+
+            for (int i = 0; i < materialesSeleccionados.Count; i++)
+            {
+                _context.ModeloMaterial.Add(new ModeloMaterial
+                {
+                    IdModelo = idModelo,
+                    IdMaterial = materialesSeleccionados[i],
+                    Cantidad = cantidades[i]
+                });
+            }
         }
     }
 }

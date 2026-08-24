@@ -1,10 +1,13 @@
 ﻿@model ProyectoFinal.Models.Modelo
+@{
+    var seleccionActual = (List<ProyectoFinal.Models.ModeloMaterial>)ViewBag.MaterialesSeleccionadosActuales;
+}
 
 <link rel="stylesheet" href="~/css/amigurumis.css" />
 
 <h2 class="titulo">Editar modelo</h2>
 
-<form asp-action="Edit" method="post" style="max-width:420px">
+<form asp-action="Edit" method="post" style="max-width:480px">
     <input type="hidden" asp-for="IdModelo" />
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
@@ -44,11 +47,72 @@
 
     <div class="mb-3">
         <label>Materiales usados</label>
-        <p style="color:var(--text-secondary,#777); font-size:13px; margin-top:6px">
+
+        <div id="filas-materiales">
+            @foreach (var actual in seleccionActual)
+            {
+                <div class="d-flex gap-2 mb-1 fila-material" style="display:flex;gap:8px;margin-bottom:6px">
+                    <select name="materialesSeleccionados" class="form-control">
+                        @foreach (var mat in (List<ProyectoFinal.Models.material>)ViewBag.Materiales)
+                        {
+                            if (mat.IdMaterial == actual.IdMaterial)
+                            {
+                                <option value="@mat.IdMaterial" selected>@mat.Nombre (Bs. @mat.PrecioUnitario / @mat.UnidadMedida)</option>
+                            }
+                            else
+                            {
+                                <option value="@mat.IdMaterial">@mat.Nombre (Bs. @mat.PrecioUnitario / @mat.UnidadMedida)</option>
+                            }
+                        }
+                    </select>
+                    <input type="number" name="cantidades" step="0.01" min="0.01" value="@actual.Cantidad" class="form-control" style="max-width:120px" required />
+                    <button type="button" class="btn-secundario btn-quitar-material">Quitar</button>
+                </div>
+            }
+        </div>
+
+        <button type="button" id="btn-agregar-material" class="btn-secundario" style="margin-top:6px">
+            + Agregar material
+        </button>
+
+        <p style="color:#777; font-size:13px; margin-top:6px">
             Costo actual: Bs @Model.Costo — Precio de venta actual: Bs @Model.PrecioVenta
-            (se recalculan al guardar, una vez conectados los materiales).
+            (se recalculan al guardar).
         </p>
     </div>
 
     <button type="submit" class="btn-pastel">Guardar cambios</button>
 </form>
+
+<template id="plantilla-fila-material">
+    <div class="d-flex gap-2 mb-1 fila-material" style="display:flex;gap:8px;margin-bottom:6px">
+        <select name="materialesSeleccionados" class="form-control">
+            @foreach (var mat in (List<ProyectoFinal.Models.material>)ViewBag.Materiales)
+            {
+                <option value="@mat.IdMaterial">@mat.Nombre (Bs. @mat.PrecioUnitario / @mat.UnidadMedida)</option>
+            }
+        </select>
+        <input type="number" name="cantidades" step="0.01" min="0.01" placeholder="Cantidad" class="form-control" style="max-width:120px" required />
+        <button type="button" class="btn-secundario btn-quitar-material">Quitar</button>
+    </div>
+</template>
+
+<script>
+    function activarBotonQuitar(fila) {
+        fila.querySelector('.btn-quitar-material').addEventListener('click', function(e) {
+            e.target.closest('.fila-material').remove();
+        });
+    }
+
+    document.querySelectorAll('#filas-materiales .fila-material').forEach(activarBotonQuitar);
+
+    document.getElementById('btn-agregar-material').addEventListener('click', function() {
+        var plantilla = document.getElementById('plantilla-fila-material');
+        var clon = plantilla.content.cloneNode(true);
+        var filaDiv = clon.querySelector('.fila-material');
+
+        activarBotonQuitar(filaDiv);
+
+        document.getElementById('filas-materiales').appendChild(clon);
+    });
+</script>
