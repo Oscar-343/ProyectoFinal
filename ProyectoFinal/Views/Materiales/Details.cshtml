@@ -1,0 +1,62 @@
+﻿@model ProyectoFinal.Models.material
+
+<h1>Detalle del Material</h1>
+<p>
+    Aquí puede consultar toda la información
+    registrada del material.
+</p>
+
+<table class="table table-bordered">
+    <tr>
+        <th>ID</th>
+        <td>@Model.IdMaterial</td>
+    </tr>
+    <tr>
+        <th>Nombre</th>
+        <td>@Model.Nombre</td>
+    </tr>
+    <tr>
+        <th>Tipo</th>
+        <td>@Model.Tipo</td>
+    </tr>
+    <tr>
+        <th>Color</th>
+        <td>@Model.Color</td>
+    </tr>
+    <tr>
+        <th>Unidad de medida</th>
+        <td>@Model.UnidadMedida</td>
+    </tr>
+    <tr>
+        <th>Cantidad disponible</th>
+        <td>@Model.CantidadDisponible</td>
+    </tr>
+    <tr>
+        <th>Precio por unidad</th>
+        <td>Bs. @Model.PrecioUnitario</td>
+    </tr>
+    <tr>
+        <th>Stock mínimo</th>
+        <td>@Model.StockMinimo</td>
+    </tr>
+    <tr>
+        <th>Estado</th>
+        <td>
+            @if (Model.Estado == "stock agotado")
+            {
+                <span style="color:red;">🔴 Sin stock</span>
+            }
+            else if (Model.Estado == "stock bajo")
+            {
+                <span style="color:orange;">⚠ Stock bajo</span>
+            }
+            else
+            {
+                <span style="color:green;">✓ Disponible</span>
+            }
+        </td>
+    </tr>
+</table>
+
+<a asp-action="Edit" asp-route-id="@Model.IdMaterial" class="btn btn-primary">Editar</a>
+<a asp-action="Index" class="btn btn-secondary">Volver</a>

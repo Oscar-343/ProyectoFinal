@@ -9,7 +9,9 @@ namespace ProyectoFinal.Data
             : base(options)
         {
         }
-        public DbSet<Modelo> Modelo { get; set; }
+
+        public DbSet<material> Material { get; set; }
+        public DbSet<modelo> Modelo { get; set; 
         // Agreguen aquí las entidades que falten
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
