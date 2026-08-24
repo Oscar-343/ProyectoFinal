@@ -64,7 +64,7 @@
         <select name="materialesSeleccionados" class="form-control">
             @foreach (var mat in (List<ProyectoFinal.Models.material>)ViewBag.Materiales)
             {
-                <option value="@mat.IdMaterial">@mat.Nombre (Bs. @mat.PrecioUnitario / @mat.UnidadMedida)</option>
+                <option value="@mat.IdMaterial">@mat.Nombre - @mat.Color (Bs. @mat.PrecioUnitario / @mat.UnidadMedida)</option>
             }
         </select>
         <input type="number" name="cantidades" step="0.01" min="0.01" placeholder="Cantidad" class="form-control" style="max-width:120px" required />

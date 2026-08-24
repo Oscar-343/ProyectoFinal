@@ -6,6 +6,7 @@ namespace ProyectoFinal.Models
     [Table("modelo")]
     public class Modelo
     {
+        // Porcentaje que se usa para calcular el precio de venta a partir del costo.
         public const decimal PORCENTAJE_GANANCIA = 1.5m;
 
         [Key]
@@ -34,12 +35,15 @@ namespace ProyectoFinal.Models
         [Column("tiempo_produccion", TypeName = "decimal(5,2)")]
         public decimal TiempoProduccion { get; set; }
 
+        // Se calcula en el controlador sumando el costo de los materiales usados,
         [Column("costo", TypeName = "decimal(8,2)")]
         public decimal Costo { get; set; }
 
+        // Se calcula en el controlador (Costo * PORCENTAJE_GANANCIA),
         [Column("precio_venta", TypeName = "decimal(8,2)")]
         public decimal PrecioVenta { get; set; }
 
+        // Utilidad calculada automáticamente, no se guarda en la base de datos (NotMapped).
         [NotMapped]
         public decimal Utilidad => PrecioVenta - Costo;
 

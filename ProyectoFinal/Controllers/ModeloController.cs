@@ -6,6 +6,7 @@ using ProyectoFinal.Filters;
 
 namespace ProyectoFinal.Controllers
 {
+    // Requiere sesión activa
     [RequiereSesion]
     public class ModeloController : Controller
     {
@@ -24,9 +25,14 @@ namespace ProyectoFinal.Controllers
         }
 
         // GET: Modelo/Catalogo
+        // Trae los materiales de cada modelo (Include/ThenInclude)
         public async Task<IActionResult> Catalogo()
         {
-            var modelos = await _context.Modelo.ToListAsync();
+            var modelos = await _context.Modelo
+                .Include(m => m.ModeloMateriales)
+                    .ThenInclude(mm => mm.Material)
+                .ToListAsync();
+
             return View(modelos);
         }
 
@@ -48,11 +54,12 @@ namespace ProyectoFinal.Controllers
                 return View(modelo);
             }
 
+            // Costo y precio de venta
             modelo.Costo = await CalcularCostoAsync(materialesSeleccionados, cantidades);
             modelo.PrecioVenta = modelo.Costo * Modelo.PORCENTAJE_GANANCIA;
 
             _context.Add(modelo);
-            await _context.SaveChangesAsync(); // Necesario primero para tener modelo.IdModelo generado.
+            await _context.SaveChangesAsync(); // Se guarda primero para que el modelo tenga su Id.
 
             AgregarModeloMateriales(modelo.IdModelo, materialesSeleccionados, cantidades);
             await _context.SaveChangesAsync();
@@ -91,6 +98,7 @@ namespace ProyectoFinal.Controllers
                 return View(modelo);
             }
 
+            // Se vuelven a calcular por si cambiaron los materiales o cantidades.
             modelo.Costo = await CalcularCostoAsync(materialesSeleccionados, cantidades);
             modelo.PrecioVenta = modelo.Costo * Modelo.PORCENTAJE_GANANCIA;
 
@@ -98,7 +106,7 @@ namespace ProyectoFinal.Controllers
             {
                 _context.Update(modelo);
 
-                // Reemplaza las asociaciones anteriores por las nuevas seleccionadas.
+                // Reemplaza las asociaciones anteriores por las nuevas seleccionadas
                 var anteriores = _context.ModeloMaterial.Where(mm => mm.IdModelo == id);
                 _context.ModeloMaterial.RemoveRange(anteriores);
 
@@ -108,6 +116,7 @@ namespace ProyectoFinal.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
+                // Pasa si otra persona/proceso modificó o borró el mismo modelo al mismo tiempo.
                 if (!ModeloExists(modelo.IdModelo)) return NotFound();
                 else throw;
             }
@@ -127,6 +136,7 @@ namespace ProyectoFinal.Controllers
         }
 
         // POST: Modelo/Delete/5
+        // ActionName("Delete") hace que este método responda al POST de la vista "Delete",
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -144,12 +154,13 @@ namespace ProyectoFinal.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // Verifica si un modelo con ese Id todavía existe (usado en caso de conflicto al editar).
         private bool ModeloExists(int id)
         {
             return _context.Modelo.Any(e => e.IdModelo == id);
         }
 
-        // Suma (precio_unitario x cantidad) de cada material elegido.
+        // Suma (precio_unitario x cantidad) de cada material elegido, para obtener el costo total del modelo.
         private async Task<decimal> CalcularCostoAsync(List<int> materialesSeleccionados, List<decimal> cantidades)
         {
             if (materialesSeleccionados == null || cantidades == null)
@@ -165,7 +176,7 @@ namespace ProyectoFinal.Controllers
             return costo;
         }
 
-        // Crea las filas de ModeloMaterial en memoria (se guardan con el SaveChangesAsync siguiente).
+        // Crea las filas de ModeloMaterial en memoria
         private void AgregarModeloMateriales(int idModelo, List<int> materialesSeleccionados, List<decimal> cantidades)
         {
             if (materialesSeleccionados == null || cantidades == null)

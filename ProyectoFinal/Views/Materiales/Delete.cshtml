@@ -1,16 +1,13 @@
 ﻿@model ProyectoFinal.Models.material
 
-<h1>Eliminar Material</h1>
-<p>
-    Está a punto de eliminar el siguiente material:
-</p>
+<h2 class="titulo">Eliminar material</h2>
+<p style="color:#777;font-size:14px">Está a punto de eliminar el siguiente material:</p>
 
-<div class="alert alert-warning">
-    <strong>Advertencia:</strong>
-    Esta acción eliminará el material de la base de datos.
+<div class="alerta-pastel">
+    <strong>Advertencia:</strong> esta acción eliminará el material de la base de datos.
 </div>
 
-<table class="table table-bordered">
+<table class="tabla-pastel" style="max-width:420px">
     <tr>
         <th>Nombre</th>
         <td>@Model.Nombre</td>
@@ -33,10 +30,10 @@
     </tr>
 </table>
 
-<p>¿Está seguro de que desea eliminar este material?</p>
+<p style="margin-top:1rem">¿Está seguro de que desea eliminar este material?</p>
 
 <form asp-action="DeleteConfirmed">
     <input type="hidden" name="id" value="@Model.IdMaterial" />
-    <button type="submit" class="btn btn-danger">Sí, eliminar</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    <button type="submit" class="btn-peligro">Sí, eliminar</button>
+    <a asp-action="Index" class="btn-secundario">Cancelar</a>
 </form>

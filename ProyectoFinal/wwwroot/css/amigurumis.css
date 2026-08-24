@@ -59,42 +59,6 @@ h1, h2, h3, .titulo {
         color: #4A148C;
     }
 
-.tabla-precios {
-    font-size: 13px;
-    margin-top: 8px;
-    border-top: 1px solid var(--gris);
-    padding-top: 8px;
-}
-
-    .tabla-precios .fila {
-        display: flex;
-        justify-content: space-between;
-    }
-
-    .tabla-precios .utilidad {
-        font-weight: 700;
-        color: #2E7D32;
-    }
-
-.btn-pastel {
-    font-family: 'Quicksand', sans-serif;
-    background-color: var(--rosa);
-    border: none;
-    border-radius: 10px;
-    padding: 8px 16px;
-    color: #880E4F;
-}
-
-    .btn-pastel:hover {
-        background-color: var(--lila);
-        color: #fff;
-    }
-
-.tabla-index th {
-    background-color: var(--gris);
-    font-family: 'Comfortaa', sans-serif;
-    font-size: 13px;
-}
 .badge-estado {
     font-family: 'Quicksand', sans-serif;
     font-size: 12px;
@@ -116,6 +80,23 @@ h1, h2, h3, .titulo {
     .badge-estado.agotado {
         background-color: var(--lila);
         color: #4A148C;
+    }
+
+.tabla-precios {
+    font-size: 13px;
+    margin-top: 8px;
+    border-top: 1px solid var(--gris);
+    padding-top: 8px;
+}
+
+    .tabla-precios .fila {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .tabla-precios .utilidad {
+        font-weight: 700;
+        color: #2E7D32;
     }
 
 .tabla-pastel {
@@ -163,6 +144,20 @@ h1, h2, h3, .titulo {
     margin-top: 2px;
 }
 
+.btn-pastel {
+    font-family: 'Quicksand', sans-serif;
+    background-color: var(--rosa);
+    border: none;
+    border-radius: 10px;
+    padding: 8px 16px;
+    color: #880E4F;
+}
+
+    .btn-pastel:hover {
+        background-color: var(--lila);
+        color: #fff;
+    }
+
 .btn-secundario {
     font-family: 'Quicksand', sans-serif;
     background-color: var(--gris);
@@ -178,3 +173,33 @@ h1, h2, h3, .titulo {
         background-color: var(--celeste);
         color: #01579B;
     }
+
+.btn-peligro {
+    font-family: 'Quicksand', sans-serif;
+    background-color: #FFCDD2;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 16px;
+    color: #B71C1C;
+    text-decoration: none;
+    display: inline-block;
+}
+
+    .btn-peligro:hover {
+        background-color: #EF9A9A;
+    }
+
+.alerta-pastel {
+    background-color: var(--rosa);
+    color: #880E4F;
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 13px;
+    margin-bottom: 1rem;
+}
+
+.tabla-index th {
+    background-color: var(--gris);
+    font-family: 'Comfortaa', sans-serif;
+    font-size: 13px;
+}

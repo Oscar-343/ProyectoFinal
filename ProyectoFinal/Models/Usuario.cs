@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ProyectoFinal.Models
 {
@@ -12,9 +11,11 @@ namespace ProyectoFinal.Models
         public int IdUsuario { get; set; }
 
         [Column("usuario")]
+        [Required(ErrorMessage = "El usuario es obligatorio")]
         public string NombreUsuario { get; set; }
 
         [Column("password")]
+        [Required(ErrorMessage = "La contraseña es obligatoria")]
         public string Password { get; set; }
     }
 }

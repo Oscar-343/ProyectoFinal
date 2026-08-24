@@ -16,7 +16,7 @@ namespace ProyectoFinal.Controllers
             _context = context;
         }
 
-        // Calcula el estado del material según su stock.
+        //Estado del material comparando su cantidad disponible contra el stock mínimo.
         private string CalcularEstado(material material)
         {
             if (material.CantidadDisponible <= 0)
@@ -33,18 +33,14 @@ namespace ProyectoFinal.Controllers
             }
         }
 
-        // =====================================================
-        // MOSTRAR TODOS LOS MATERIALES
-        // =====================================================
+        // Lista todos los materiales registrados.
         public IActionResult Index()
         {
             var materiales = _context.Material.ToList();
             return View(materiales);
         }
 
-        // =====================================================
-        // MOSTRAR UN MATERIAL
-        // =====================================================
+        // Muestra el detalle de un material específico.
         public IActionResult Details(int id)
         {
             var material = _context.Material.Find(id);
@@ -54,23 +50,15 @@ namespace ProyectoFinal.Controllers
             }
             return View(material);
         }
-
-        // =====================================================
-        // MOSTRAR FORMULARIO PARA CREAR
-        // =====================================================
         public IActionResult Create()
         {
             return View();
         }
 
-        // =====================================================
-        // GUARDAR NUEVO MATERIAL
-        // =====================================================
         [HttpPost]
         public IActionResult Create(material material)
         {
-            // El estado se calcula automáticamente,
-            // no lo llena el usuario en el formulario.
+           
             ModelState.Remove("Estado");
 
             if (ModelState.IsValid)
@@ -86,9 +74,7 @@ namespace ProyectoFinal.Controllers
             return View(material);
         }
 
-        // =====================================================
-        // MOSTRAR FORMULARIO PARA EDITAR
-        // =====================================================
+        // Muestra el formulario de edición con los datos actuales del material.
         public IActionResult Edit(int id)
         {
             var material = _context.Material.Find(id);
@@ -99,9 +85,6 @@ namespace ProyectoFinal.Controllers
             return View(material);
         }
 
-        // =====================================================
-        // GUARDAR CAMBIOS
-        // =====================================================
         [HttpPost]
         public IActionResult Edit(material material)
         {
@@ -120,9 +103,7 @@ namespace ProyectoFinal.Controllers
             return View(material);
         }
 
-        // =====================================================
-        // MOSTRAR CONFIRMACIÓN DE ELIMINACIÓN
-        // =====================================================
+        // Muestra la pantalla de confirmación antes de borrar.
         public IActionResult Delete(int id)
         {
             var material = _context.Material.Find(id);
@@ -133,9 +114,6 @@ namespace ProyectoFinal.Controllers
             return View(material);
         }
 
-        // =====================================================
-        // ELIMINAR MATERIAL
-        // =====================================================
         [HttpPost]
         public IActionResult DeleteConfirmed(int id)
         {

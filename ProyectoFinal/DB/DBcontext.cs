@@ -3,6 +3,7 @@ using ProyectoFinal.Models;
 
 namespace ProyectoFinal.Data
 {
+    // Cconexión a la base de datos y las tablas que EF Core puede manejar.
     public class TiendaDbContext : DbContext
     {
         public TiendaDbContext(DbContextOptions<TiendaDbContext> options)
@@ -10,19 +11,19 @@ namespace ProyectoFinal.Data
         {
         }
 
+        // Cada DbSet representa una tabla de la base de datos.
         public DbSet<material> Material { get; set; }
-        public DbSet<Modelo> Modelo { get; set;} 
+        public DbSet<Modelo> Modelo { get; set; }
         public DbSet<Usuario> Usuario { get; set; }
         public DbSet<ModeloMaterial> ModeloMaterial { get; set; }
-        // Agreguen aquí las entidades que falten
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //Llave primaria es la combinación de IdModelo + IdMaterial (llave compuesta).
             modelBuilder.Entity<ModeloMaterial>()
                 .HasKey(mm => new { mm.IdModelo, mm.IdMaterial });
-            base.OnModelCreating(modelBuilder);
 
-            // Aquí van configuraciones extra
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

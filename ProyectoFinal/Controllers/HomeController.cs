@@ -7,34 +7,37 @@ using ProyectoFinal.Filters;
 
 namespace ProyectoFinal.Controllers
 {
+    //Obliga a que el usuario haya iniciado sesión
     [RequiereSesion]
     public class HomeController : Controller
     {
         private readonly TiendaDbContext _context;
 
+        // Se inyecta el DbContext para poder consultar la base de datos.
         public HomeController(TiendaDbContext context)
         {
             _context = context;
         }
 
+        // Página principal (dashboard)
         public async Task<IActionResult> Index()
         {
-            // Si tu compañero guarda el nombre en sesión con otra clave, ajusta esto.
             ViewBag.NombreUsuario = HttpContext.Session.GetString("UsuarioLogueado") ?? "Administradora";
 
             var dashboard = new HomeDashboardViewModel
             {
+                // Cuenta cuántos modelos hay registrados en total.
                 TotalModelos = await _context.Modelo.CountAsync(),
+
+                // Cuenta cuántos materiales hay registrados en total.
                 TotalMateriales = await _context.Material.CountAsync(),
 
-                // Ajusta CantidadDisponible / StockMinimo si tu compañero usó otros nombres de propiedad.
+                //Materiales cuyo stock ya llegó o bajó del mínimo
                 MaterialesPorAcabarse = await _context.Material
                     .Where(m => m.CantidadDisponible <= m.StockMinimo)
                     .OrderBy(m => m.CantidadDisponible)
                     .ToListAsync(),
 
-                // TODO: reemplazar cuando exista la tabla de ventas/pedidos (sprint futuro).
-                // Por ahora queda vacío a propósito, la vista muestra un estado "próximamente".
                 ModelosMasVendidos = new List<Modelo>()
             };
 
@@ -46,6 +49,7 @@ namespace ProyectoFinal.Controllers
             return View();
         }
 
+        // Evita que el navegador guarde en caché la página de error.
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
