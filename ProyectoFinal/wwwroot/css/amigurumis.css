@@ -1,0 +1,97 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&family=Comfortaa:wght@400;700&display=swap');
+
+:root {
+    --rosa: #F8BBD0;
+    --lila: #C393D8;
+    --celeste: #B3E5FC;
+    --crema: #FFF8E1;
+    --gris: #ECECEC;
+}
+
+body {
+    font-family: 'Quicksand', sans-serif;
+    background-color: var(--crema);
+}
+
+h1, h2, h3, .titulo {
+    font-family: 'Comfortaa', sans-serif;
+}
+
+.card-modelo {
+    background-color: #fff;
+    border: 1px solid var(--gris);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+    .card-modelo img {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+        background-color: var(--gris);
+    }
+
+    .card-modelo .cuerpo {
+        padding: 12px 14px;
+    }
+
+.badge-dificultad {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    background-color: var(--lila);
+    color: #fff;
+}
+
+    .badge-dificultad.baja {
+        background-color: var(--celeste);
+        color: #01579B;
+    }
+
+    .badge-dificultad.media {
+        background-color: var(--rosa);
+        color: #880E4F;
+    }
+
+    .badge-dificultad.alta {
+        background-color: var(--lila);
+        color: #4A148C;
+    }
+
+.tabla-precios {
+    font-size: 13px;
+    margin-top: 8px;
+    border-top: 1px solid var(--gris);
+    padding-top: 8px;
+}
+
+    .tabla-precios .fila {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .tabla-precios .utilidad {
+        font-weight: 700;
+        color: #2E7D32;
+    }
+
+.btn-pastel {
+    font-family: 'Quicksand', sans-serif;
+    background-color: var(--rosa);
+    border: none;
+    border-radius: 10px;
+    padding: 8px 16px;
+    color: #880E4F;
+}
+
+    .btn-pastel:hover {
+        background-color: var(--lila);
+        color: #fff;
+    }
+
+.tabla-index th {
+    background-color: var(--gris);
+    font-family: 'Comfortaa', sans-serif;
+    font-size: 13px;
+}

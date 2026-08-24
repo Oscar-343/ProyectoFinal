@@ -1,0 +1,33 @@
+﻿@model IEnumerable<ProyectoFinal.Models.Modelo>
+
+<link rel="stylesheet" href="~/css/amigurumis.css" />
+
+<h2 class="titulo">Modelos de amigurumi</h2>
+<a asp-action="Create" class="btn-pastel">+ Nuevo modelo</a>
+
+<table class="table tabla-index mt-3">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Dificultad</th>
+            <th>Tiempo (h)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var m in Model)
+        {
+            <tr>
+                <td>@m.Nombre</td>
+                <td>@m.Descripcion</td>
+                <td><span class="badge-dificultad @m.Dificultad.ToLower()">@m.Dificultad</span></td>
+                <td>@m.TiempoProduccion</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@m.IdModelo">Editar</a> |
+                    <a asp-action="Delete" asp-route-id="@m.IdModelo">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

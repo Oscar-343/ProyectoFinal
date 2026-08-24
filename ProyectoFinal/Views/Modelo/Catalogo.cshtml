@@ -1,0 +1,25 @@
+﻿@model IEnumerable<ProyectoFinal.Models.Modelo>
+
+<link rel="stylesheet" href="~/css/amigurumis.css" />
+
+<h2 class="titulo">Catálogo de amigurumis</h2>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px">
+    @foreach (var m in Model)
+    {
+        <div class="card-modelo">
+            <img src="@m.Imagen" />
+            <div class="cuerpo">
+                <strong>@m.Nombre</strong>
+                <span class="badge-dificultad @m.Dificultad.ToLower()">@m.Dificultad</span>
+                <p>@m.Descripcion</p>
+
+                <div class="tabla-precios">
+                    <div class="fila"><span>Precio venta</span><span>Bs @m.PrecioVenta</span></div>
+                    <div class="fila"><span>Costo</span><span>Bs @m.Costo</span></div>
+                    <div class="fila utilidad"><span>Utilidad</span><span>Bs @m.Utilidad</span></div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
