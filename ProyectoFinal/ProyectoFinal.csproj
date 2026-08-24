@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Extras\SQL\Consultas.sql" />
   </ItemGroup>
 
   <ItemGroup>
