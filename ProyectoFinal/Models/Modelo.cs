@@ -55,6 +55,12 @@ namespace ProyectoFinal.Models
         [NotMapped]
         public decimal Utilidad => PrecioVenta - Costo;
 
+        // columna de agregar pedidos
+        [Column("veces_agregado")]
+        public int VecesAgregado { get; set; } = 0;
+
+
+
         // Lista de materiales usados en esta obra, con su cantidad (relación uno a muchos).
         public ICollection<ModeloMaterial> ModeloMateriales { get; set; } = new List<ModeloMaterial>();
     }

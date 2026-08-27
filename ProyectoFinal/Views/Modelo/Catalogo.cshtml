@@ -44,6 +44,15 @@
                         <p style="font-size:12px;color:#aaa;margin:0">Sin materiales registrados aún.</p>
                     }
                 </div>
+
+                <div style="margin-top:10px;border-top:1px solid var(--gris);padding-top:8px;display:flex;align-items:center;justify-content:space-between">
+                    <form asp-action="Agregar" asp-controller="Modelo" asp-route-id="@m.IdModelo" method="post" style="display:flex;align-items:center;gap:6px">
+                        @Html.AntiForgeryToken()
+                        <input type="number" name="cantidad" value="1" min="1" style="width:50px;padding:2px 4px;border:1px solid var(--gris);border-radius:4px;font-size:12px" />
+                        <button type="submit" class="btn-agregar" style="padding:4px 10px;font-size:11px">+ Agregar</button>
+                    </form>
+                    <span style="font-size:12px;color:#666">Agregado: <strong>@m.VecesAgregado</strong> veces</span>
+                </div>
             </div>
         </div>
     }

@@ -229,5 +229,21 @@ namespace ProyectoFinal.Controllers
                 });
             }
         }
+        [HttpPost]
+        public async Task<IActionResult> Agregar(int id, int cantidad = 1)
+        {
+            var modelo = await _context.Modelo.FindAsync(id);
+            if (modelo == null) return NotFound();
+
+            // Evita valores inválidos o negativos desde el formulario
+            if (cantidad < 1) cantidad = 1;
+
+            modelo.VecesAgregado += cantidad;
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Catalogo));
+        }
+
+
     }
 }
