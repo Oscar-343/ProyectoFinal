@@ -25,6 +25,8 @@
         <span asp-validation-for="Imagen" class="text-danger"></span>
     </div>
 
+    <!-- Select de dificultad: el valor elegido aquí (Baja/Media/Alta) viaja al controller
+         y ahí se usa para decidir el multiplicador de ganancia. -->
     <div class="mb-2">
         <label asp-for="Dificultad"></label>
         <select asp-for="Dificultad" class="form-control">
@@ -36,12 +38,16 @@
         <span asp-validation-for="Dificultad" class="text-danger"></span>
     </div>
 
+    <!-- Horas de trabajo: el controller multiplica este valor x Bs. 5 para sacar la mano de obra. -->
     <div class="mb-3">
         <label asp-for="TiempoProduccion">Tiempo de producción (horas)</label>
         <input asp-for="TiempoProduccion" type="number" step="0.5" class="form-control" />
         <span asp-validation-for="TiempoProduccion" class="text-danger"></span>
+        <small style="color:#777">Se usa para calcular la mano de obra (Bs. 5 por hora).</small>
     </div>
 
+    <!-- Aquí el usuario arma la lista de materiales usados: cada fila es un
+         material + una cantidad. El JavaScript de abajo permite agregar filas nuevas. -->
     <div class="mb-3">
         <label>Materiales usados</label>
 
@@ -52,19 +58,22 @@
         </button>
 
         <p style="color:#777; font-size:13px; margin-top:6px">
-            El costo y precio de venta se calculan automáticamente según los materiales y cantidades elegidos.
+            El costo (materiales + mano de obra) y el precio de venta se calculan automáticamente
+            según los materiales elegidos, el tiempo de producción y la dificultad seleccionada.
         </p>
     </div>
 
     <button type="submit" class="btn-pastel">Guardar</button>
 </form>
 
+<!-- Plantilla HTML invisible: es el "molde" de una fila de material.
+     No se muestra sola; se clona con JavaScript cada vez que se agrega una fila. -->
 <template id="plantilla-fila-material">
     <div class="d-flex gap-2 mb-1 fila-material" style="display:flex;gap:8px;margin-bottom:6px">
         <select name="materialesSeleccionados" class="form-control">
             @foreach (var mat in (List<ProyectoFinal.Models.material>)ViewBag.Materiales)
             {
-                <option value="@mat.IdMaterial">@mat.Nombre - @mat.Color (Bs. @mat.PrecioUnitario / @mat.UnidadMedida)</option>
+                <option value="@mat.IdMaterial">@mat.Nombre (Bs. @mat.PrecioUnitario / @mat.UnidadMedida)</option>
             }
         </select>
         <input type="number" name="cantidades" step="0.01" min="0.01" placeholder="Cantidad" class="form-control" style="max-width:120px" required />
@@ -73,17 +82,21 @@
 </template>
 
 <script>
-    document.getElementById('btn-agregar-material').addEventListener('click', function () {
+    // Cada vez que se hace clic en "+ Agregar material", se clona la plantilla
+    // de arriba y se agrega como una fila nueva dentro de #filas-materiales.
+    document.getElementById('btn-agregar-material').addEventListener('click', function() {
         var plantilla = document.getElementById('plantilla-fila-material');
         var clon = plantilla.content.cloneNode(true);
 
-        clon.querySelector('.btn-quitar-material').addEventListener('click', function (e) {
+        // Le da funcionalidad al botón "Quitar" de esa fila específica.
+        clon.querySelector('.btn-quitar-material').addEventListener('click', function(e) {
             e.target.closest('.fila-material').remove();
         });
 
         document.getElementById('filas-materiales').appendChild(clon);
     });
 
-    // Agrega una primera fila automáticamente al cargar la página.
+    // Agrega una primera fila automáticamente al cargar la página,
+    // para que el formulario no empiece completamente vacío.
     document.getElementById('btn-agregar-material').click();
 </script>
