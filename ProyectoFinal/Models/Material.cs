@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProyectoFinal.Models
 {
-   
     [Table("material")]
     public class material
     {
@@ -23,7 +22,6 @@ namespace ProyectoFinal.Models
         [Column("color")]
         public string Color { get; set; }
 
-        // Unidad en la que se mide el material (metros, kg, unidades, etc.).
         [Required(ErrorMessage = "Debe ingresar la unidad de medida")]
         [Column("unidad_medida")]
         public string UnidadMedida { get; set; }
@@ -37,7 +35,7 @@ namespace ProyectoFinal.Models
         [Column("stock_minimo")]
         public decimal StockMinimo { get; set; }
 
-        // Se calcula automáticamente en el controlador (comparando CantidadDisponible vs StockMinimo),
+        // Se calcula automáticamente en el controlador,
         // no lo llena el usuario en el formulario.
         [Column("estado")]
         public string Estado { get; set; } = "stock disponible";
