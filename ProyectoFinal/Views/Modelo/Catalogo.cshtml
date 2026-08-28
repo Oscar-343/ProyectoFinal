@@ -2,6 +2,8 @@
 
 <link rel="stylesheet" href="~/css/amigurumis.css" />
 
+@Html.AntiForgeryToken()
+
 <h2 class="titulo">Catálogo de amigurumis</h2>
 
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">
@@ -45,15 +47,142 @@
                     }
                 </div>
 
+                <!--
+                    Ya NO es un <form> que hace postback. Es un botón normal que
+                    llama a agregarAlCarrito() en JS y actualiza el carrito en memoria,
+                    sin recargar la página ni perder el scroll.
+                -->
                 <div style="margin-top:10px;border-top:1px solid var(--gris);padding-top:8px;display:flex;align-items:center;justify-content:space-between">
-                    <form asp-action="Agregar" asp-controller="Modelo" asp-route-id="@m.IdModelo" method="post" style="display:flex;align-items:center;gap:6px">
-                        @Html.AntiForgeryToken()
-                        <input type="number" name="cantidad" value="1" min="1" style="width:50px;padding:2px 4px;border:1px solid var(--gris);border-radius:4px;font-size:12px" />
-                        <button type="submit" class="btn-agregar" style="padding:4px 10px;font-size:11px">+ Agregar</button>
-                    </form>
-                    <span style="font-size:12px;color:#666">Agregado: <strong>@m.VecesAgregado</strong> veces</span>
+                    <div style="display:flex;align-items:center;gap:6px">
+                        <input type="number" id="cantidad-@m.IdModelo" value="1" min="1"
+                               style="width:50px;padding:2px 4px;border:1px solid var(--gris);border-radius:4px;font-size:12px" />
+                        <button type="button" class="btn-agregar" style="padding:4px 10px;font-size:11px"
+                                onclick="agregarAlCarrito(@m.IdModelo, '@m.Nombre', document.getElementById('cantidad-@m.IdModelo').value)">
+                            + Agregar
+                        </button>
+                        <button type="button" style="padding:4px 10px;font-size:11px;background:#eee;border:1px solid var(--gris);border-radius:4px;cursor:pointer"
+                                onclick="quitarUnoDelCarrito(@m.IdModelo)">
+                            − Quitar
+                        </button>
+                    </div>
+                    <span id="carrito-cantidad-@m.IdModelo" style="font-size:12px;color:#666">En carrito: <strong>0</strong></span>
                 </div>
             </div>
         </div>
     }
 </div>
+
+<!-- Barra flotante del carrito -->
+<div id="barra-carrito" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;
+    border-top:2px solid var(--gris,#ddd);box-shadow:0 -2px 8px rgba(0,0,0,.1);padding:12px 20px;z-index:1000">
+    <div style="display:flex;align-items:center;justify-content:space-between;max-width:900px;margin:0 auto;flex-wrap:wrap;gap:10px">
+        <div id="resumen-carrito" style="font-size:13px;color:#333"></div>
+        <div style="display:flex;gap:10px;align-items:center">
+            <span id="error-carrito" style="color:#c0392b;font-size:12px"></span>
+            <button type="button" onclick="enviarCarrito()" class="btn-agregar" style="padding:8px 16px;font-size:13px">
+                Registrar pedido con estos modelos
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Carrito en memoria: { idModelo: { nombre, cantidad } }
+    const carrito = {};
+
+    function agregarAlCarrito(idModelo, nombre, cantidad) {
+        cantidad = parseInt(cantidad, 10);
+        if (isNaN(cantidad) || cantidad < 1) cantidad = 1;
+
+        if (carrito[idModelo]) {
+            carrito[idModelo].cantidad += cantidad;
+        } else {
+            carrito[idModelo] = { nombre: nombre, cantidad: cantidad };
+        }
+
+        document.getElementById('carrito-cantidad-' + idModelo).innerHTML =
+            'En carrito: <strong>' + carrito[idModelo].cantidad + '</strong>';
+
+        actualizarBarraCarrito();
+    }
+
+    // Resta del carrito la cantidad que esté en el input de esa card (mismo valor que usa "+ Agregar").
+    // Si llega a 0 o menos, el modelo se quita por completo del carrito.
+    function quitarUnoDelCarrito(idModelo) {
+        if (!carrito[idModelo]) return;
+
+        let cantidad = parseInt(document.getElementById('cantidad-' + idModelo).value, 10);
+        if (isNaN(cantidad) || cantidad < 1) cantidad = 1;
+
+        carrito[idModelo].cantidad -= cantidad;
+
+        if (carrito[idModelo].cantidad <= 0) {
+            quitarDelCarrito(idModelo);
+            return;
+        }
+
+        document.getElementById('carrito-cantidad-' + idModelo).innerHTML =
+            'En carrito: <strong>' + carrito[idModelo].cantidad + '</strong>';
+
+        actualizarBarraCarrito();
+    }
+
+    function quitarDelCarrito(idModelo) {
+        delete carrito[idModelo];
+        document.getElementById('carrito-cantidad-' + idModelo).innerHTML = 'En carrito: <strong>0</strong>';
+        actualizarBarraCarrito();
+    }
+
+    function actualizarBarraCarrito() {
+        const ids = Object.keys(carrito);
+        const barra = document.getElementById('barra-carrito');
+        const resumen = document.getElementById('resumen-carrito');
+
+        if (ids.length === 0) {
+            barra.style.display = 'none';
+            return;
+        }
+
+        barra.style.display = 'block';
+        resumen.innerHTML = ids.map(id =>
+            `${carrito[id].nombre} x${carrito[id].cantidad}
+                 <a href="#" onclick="quitarDelCarrito(${id});return false;" style="color:#c0392b;margin-left:4px">✕</a>`
+        ).join(' &nbsp;|&nbsp; ');
+    }
+
+    async function enviarCarrito() {
+        const errorSpan = document.getElementById('error-carrito');
+        errorSpan.textContent = '';
+
+        const seleccion = Object.keys(carrito).map(id => ({
+            idModelo: parseInt(id, 10),
+            cantidad: carrito[id].cantidad
+        }));
+
+        if (seleccion.length === 0) return;
+
+        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        try {
+            const respuesta = await fetch('/Pedido/RecibirSeleccion', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': token
+                },
+                body: JSON.stringify(seleccion)
+            });
+
+            if (!respuesta.ok) {
+                const texto = await respuesta.text();
+                errorSpan.textContent = texto || 'No se pudo enviar el pedido.';
+                return;
+            }
+
+            const data = await respuesta.json();
+            window.location.href = data.redirectUrl;
+        } catch (e) {
+            errorSpan.textContent = 'Error de conexión, intenta de nuevo.';
+        }
+    }
+</script>

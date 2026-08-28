@@ -7,11 +7,10 @@ namespace ProyectoFinal.Models
     [Table("modelo")]
     public class Modelo
     {
-        // Porcentaje de ganancia "de respaldo", solo se usa si la dificultad
-        // no coincide con "baja", "media" ni "alta" (caso raro, por seguridad).
+        // no coincide con "baja", "media" ni "alta"
         public const decimal PORCENTAJE_GANANCIA = 1.5m;
 
-        [Key] // Marca este campo como la llave primaria (identificador único) del modelo.
+        [Key]
         [Column("id_modelo")]
         public int IdModelo { get; set; }
 
@@ -30,28 +29,24 @@ namespace ProyectoFinal.Models
         public string Imagen { get; set; }
 
         // Nivel de dificultad de la obra: "Baja", "Media" o "Alta".
-        // Este valor se usa en el controller para decidir cuánto margen de ganancia aplicar.
         [Required(ErrorMessage = "La dificultad es obligatoria.")]
         [Column("dificultad")]
         public string Dificultad { get; set; }
 
-        // Horas que toma producir la obra. Se usa para calcular la mano de obra (horas x Bs. 5).
+        // Horas que toma producir la obra.
         [Required(ErrorMessage = "El tiempo de producción es obligatorio.")]
         [Column("tiempo_produccion", TypeName = "decimal(5,2)")]
         public decimal TiempoProduccion { get; set; }
 
         // Costo total = materiales usados + mano de obra. Se calcula automáticamente
-        // en el controller, el usuario no lo escribe a mano.
         [Column("costo", TypeName = "decimal(8,2)")]
         public decimal Costo { get; set; }
 
         // Precio final de venta = Costo x multiplicador según dificultad.
-        // También se calcula automáticamente en el controller.
         [Column("precio_venta", TypeName = "decimal(8,2)")]
         public decimal PrecioVenta { get; set; }
 
         // [NotMapped] significa que esta propiedad NO existe como columna en la base de datos;
-        // se calcula al vuelo en memoria cada vez que se usa (precio de venta - costo).
         [NotMapped]
         public decimal Utilidad => PrecioVenta - Costo;
 
@@ -59,9 +54,9 @@ namespace ProyectoFinal.Models
         [Column("veces_agregado")]
         public int VecesAgregado { get; set; } = 0;
 
-
-
         // Lista de materiales usados en esta obra, con su cantidad (relación uno a muchos).
         public ICollection<ModeloMaterial> ModeloMateriales { get; set; } = new List<ModeloMaterial>();
+
+        public ICollection<PedidoDetalle> PedidoDetalles { get; set; } = new List<PedidoDetalle>();
     }
 }

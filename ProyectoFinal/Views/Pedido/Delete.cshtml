@@ -1,0 +1,33 @@
+﻿@model Pedido
+
+@{
+    ViewData["Title"] = "Eliminar pedido";
+}
+
+<h2>¿Eliminar este pedido?</h2>
+
+<div class="alert alert-warning">
+    Esta acción no se puede deshacer.
+</div>
+
+<dl class="row">
+    <dt class="col-sm-3">Cliente</dt>
+    <dd class="col-sm-9">@Model.Cliente</dd>
+
+    <dt class="col-sm-3">Estado</dt>
+    <dd class="col-sm-9">@Model.Estado</dd>
+
+    <dt class="col-sm-3">Fecha de entrega</dt>
+    <dd class="col-sm-9">@Model.FechaEntrega.ToString("dd/MM/yyyy HH:mm")</dd>
+
+    <dt class="col-sm-3">Modelos</dt>
+    <dd class="col-sm-9">
+        @string.Join(", ", Model.Detalles.Select(d => $"{d.Modelo.Nombre} x{d.Cantidad}"))
+    </dd>
+</dl>
+
+<form asp-action="Delete" asp-route-id="@Model.IdPedido" method="post">
+    <input type="hidden" asp-for="IdPedido" />
+    <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

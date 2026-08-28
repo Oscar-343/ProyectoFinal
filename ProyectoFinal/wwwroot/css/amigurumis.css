@@ -745,3 +745,45 @@ body {
         opacity: .5;
         cursor: not-allowed;
     }
+.nav-item-toggle {
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+}
+
+.nav-caret {
+    margin-left: auto;
+    font-size: 0.75rem;
+    transition: transform 0.2s ease;
+}
+
+.nav-item-toggle[aria-expanded="true"] .nav-caret {
+    transform: rotate(180deg);
+}
+
+.nav-subitem {
+    display: block;
+    padding: 6px 12px 6px 32px; /* indentado respecto a los nav-item */
+    font-size: 0.9rem;
+    opacity: 0.85;
+    text-decoration: none;
+    color: inherit;
+}
+
+    .nav-subitem:hover {
+        opacity: 1;
+        text-decoration: underline;
+    }
+
+.nav-subitem-disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    pointer-events: none;
+}

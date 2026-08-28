@@ -1,0 +1,118 @@
+﻿GUÍA: CONFIGURAR LA BASE DE DATOS DEL PROYECTO (EF Core Migrations)
+
+IMPORTANTE ANTES DE EMPEZAR
+
+PASO 1: Instalar el SDK de .NET (si no lo tienes)
+
+Verifica que ya tengas instalado el SDK de .NET corriendo:
+
+    dotnet --version
+
+Si te da un número de versión (ej. 8.0.x), ya lo tienes y puedes
+saltar al Paso 2. Si no, descárgalo de:
+https://dotnet.microsoft.com/download
+
+PASO 2: Instalar la herramienta dotnet-ef (CLI de Entity Framework)
+Esta herramienta es aparte del SDK y hay que instalarla una sola vez
+por máquina:
+
+    dotnet tool install --global dotnet-ef
+
+Si ya la tenías instalada pero de una versión vieja:
+
+    dotnet tool update --global dotnet-ef
+
+Cierra y vuelve a abrir la terminal después de instalarla (a veces
+no reconoce el comando nuevo hasta reiniciar la sesión).
+
+Verifica que quedó instalada:
+
+    dotnet ef --version
+
+Debe mostrarte un número de versión, no un error.
+
+------------------------------------------------------------------
+PASO 3: Clonar/actualizar el proyecto
+------------------------------------------------------------------
+    git clone <url-del-repositorio>
+    (o si ya lo tenías clonado)
+    git pull
+
+------------------------------------------------------------------
+PASO 4: Configurar tu cadena de conexión local
+------------------------------------------------------------------
+Abre el archivo "appsettings.json" (o "appsettings.Development.json")
+en la raíz del proyecto y revisa la cadena de conexión a MySQL.
+Ajusta usuario, contraseña, servidor y nombre de base de datos según
+tu instalación local de MySQL/XAMPP/WAMP, por ejemplo:
+
+    "ConnectionStrings": {
+        "TiendaDbContext": "server=localhost;port=3306;database=proyectofinal;user=root;password=TU_PASSWORD"
+    }
+
+No es necesario crear la base de datos manualmente en este paso;
+EF la crea sola en el Paso 7 si no existe.
+
+------------------------------------------------------------------
+PASO 5: (Solo si ya tenías una base de datos vieja de este proyecto)
+------------------------------------------------------------------
+Si en tu máquina ya existía una base de datos de una versión anterior
+del proyecto (con tablas desactualizadas), es más seguro borrarla
+por completo en vez de intentar migrarla:
+
+    dotnet ef database drop
+
+Te va a pedir confirmación (escribe "y" o "sí").
+
+Si ese comando falla, hazlo manual desde MySQL Workbench o la
+terminal de MySQL:
+
+    DROP DATABASE nombre_de_tu_base;
+    CREATE DATABASE nombre_de_tu_base;
+
+Recomendación: si además tienes una carpeta "Migrations" LOCAL que
+no coincide con la del repositorio (por ejemplo, la generaste tú
+mismo antes de hacer "git pull"), bórrala y usa la que trae el
+repositorio. La tabla "__EFMigrationsHistory" no hay que tocarla
+a mano: se borra sola al borrar la base de datos completa.
+
+------------------------------------------------------------------
+PASO 6: Ubicarte en la carpeta correcta del proyecto
+------------------------------------------------------------------
+El comando "dotnet ef" debe correr desde la carpeta donde está el
+archivo .csproj (no desde la carpeta de la solución si son distintas).
+Para encontrarlo:
+
+    dir *.csproj -Recurse      (PowerShell)
+
+Luego:
+
+    cd NombreDeLaCarpetaConElCsproj
+
+------------------------------------------------------------------
+PASO 7: Aplicar las migraciones (crear/actualizar las tablas)
+------------------------------------------------------------------
+    dotnet ef database update
+
+Esto crea la base de datos (si no existe) y todas las tablas según
+la carpeta "Migrations" que ya viene en el repositorio: modelo,
+material, modelo_material, pedido, pedido_detalle, etc.
+
+------------------------------------------------------------------
+PASO 8: Verificar
+------------------------------------------------------------------
+Abre MySQL Workbench y confirma que aparecen todas las tablas
+esperadas con las columnas correctas (sin columnas raras tipo
+"PedidoIdPedido" o "ModeloIdModelo" — si aparecen esas, algo quedó
+desactualizado, avisa al equipo).
+
+------------------------------------------------------------------
+SI NECESITAS REGENERAR LA MIGRACIÓN (solo si TÚ cambiaste un Model)
+------------------------------------------------------------------
+1. Borra la carpeta "Migrations".
+2. dotnet ef database drop
+3. dotnet ef migrations add InicialCompleta
+4. dotnet ef database update
+5. Sube (git add / commit / push) la nueva carpeta "Migrations" para
+   que el resto del equipo la use con "database update" (no necesitan
+   volver a generarla, solo aplicarla).

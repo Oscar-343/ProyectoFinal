@@ -1,0 +1,63 @@
+﻿@model Pedido
+
+@{
+    ViewData["Title"] = "Detalle del pedido";
+    string estadoClase = Model.Estado.ToString().ToLowerInvariant();
+}
+
+<div class="content-header">
+    <h2>Pedido #@Model.IdPedido</h2>
+    <div>
+        <a class="btn btn-secondary" asp-action="Edit" asp-route-id="@Model.IdPedido">Editar</a>
+        <a class="btn btn-secondary" asp-action="Index">Volver</a>
+    </div>
+</div>
+
+<dl class="row">
+    <dt class="col-sm-3">Cliente</dt>
+    <dd class="col-sm-9">@Model.Cliente</dd>
+
+    <dt class="col-sm-3">Estado</dt>
+    <dd class="col-sm-9"><span class="badge estado-@estadoClase">@Model.Estado</span></dd>
+
+    <dt class="col-sm-3">Fecha de pedido</dt>
+    <dd class="col-sm-9">@Model.FechaPedido.ToString("dd/MM/yyyy HH:mm")</dd>
+
+    <dt class="col-sm-3">Fecha de inicio</dt>
+    <dd class="col-sm-9">@Model.FechaInicio.ToString("dd/MM/yyyy HH:mm")</dd>
+
+    <dt class="col-sm-3">Fecha de entrega</dt>
+    <dd class="col-sm-9">@Model.FechaEntrega.ToString("dddd dd/MM/yyyy HH:mm")</dd>
+
+    <dt class="col-sm-3">Horas de producción</dt>
+    <dd class="col-sm-9">@Model.HorasProduccionTotal horas</dd>
+</dl>
+
+<h4>Modelos pedidos</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Modelo</th>
+            <th>Cantidad</th>
+            <th>Precio unitario</th>
+            <th>Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var detalle in Model.Detalles)
+        {
+            <tr>
+                <td>@detalle.Modelo.Nombre</td>
+                <td>@detalle.Cantidad</td>
+                <td>@detalle.Modelo.PrecioVenta.ToString("C")</td>
+                <td>@((detalle.Modelo.PrecioVenta * detalle.Cantidad).ToString("C"))</td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <th colspan="3">Total</th>
+            <th>@Model.PrecioVentaTotal.ToString("C")</th>
+        </tr>
+    </tfoot>
+</table>

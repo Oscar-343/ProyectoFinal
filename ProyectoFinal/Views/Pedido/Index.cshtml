@@ -1,0 +1,87 @@
+﻿@model List<Pedido>
+
+@{
+    ViewData["Title"] = ViewBag.TituloLista;
+}
+
+<div class="content-header">
+    <h2>@ViewBag.TituloLista</h2>
+    <a class="btn btn-primary" asp-controller="Pedido" asp-action="Create">+ Nuevo pedido</a>
+</div>
+
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-success">@TempData["Mensaje"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (!Model.Any())
+{
+    <p>No hay pedidos para mostrar.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Modelos</th>
+                <th>Fecha de inicio</th>
+                <th>Fecha de entrega</th>
+                @if (ViewBag.MostrarTiempoRestante == true)
+                {
+                    <th>Tiempo restante</th>
+                }
+                <th>Estado</th>
+                <th>Total</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pedido in Model)
+            {
+                // Estado es un enum (EstadoPedido); hay que pasarlo a texto
+                // antes de usar ToLower(), o revienta con CS7036.
+                string estadoClase = pedido.Estado.ToString().ToLowerInvariant();
+                string tiempoRestante = ViewBag.MostrarTiempoRestante == true
+                    ? CalcularTiempoRestante(pedido.FechaEntrega)
+                    : null;
+                string modelosTexto = string.Join(", ", pedido.Detalles.Select(d => $"{d.Modelo.Nombre} x{d.Cantidad}"));
+
+                <tr>
+                    <td>@pedido.Cliente</td>
+                    <td>@modelosTexto</td>
+                    <td>@pedido.FechaInicio.ToString("dd/MM/yyyy")</td>
+                    <td>@pedido.FechaEntrega.ToString("dd/MM/yyyy")</td>
+                    @if (ViewBag.MostrarTiempoRestante == true)
+                    {
+                        <td>@tiempoRestante</td>
+                    }
+                    <td>
+                        <span class="badge estado-@estadoClase">@pedido.Estado</span>
+                    </td>
+                    <td>@pedido.PrecioVentaTotal.ToString("C")</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@pedido.IdPedido">Ver</a> |
+                        <a asp-action="Edit" asp-route-id="@pedido.IdPedido">Editar</a> |
+                        <a asp-action="Delete" asp-route-id="@pedido.IdPedido">Eliminar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@functions {
+    string CalcularTiempoRestante(DateTime fechaEntrega)
+    {
+        var restante = fechaEntrega - DateTime.Now;
+        if (restante.TotalHours <= 0) return "Vencido";
+        int dias = restante.Days;
+        int horas = restante.Hours;
+        return dias == 0 ? $"{horas} horas" : $"{dias} días, {horas} horas";
+    }
+}

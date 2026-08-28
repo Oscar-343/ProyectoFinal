@@ -9,9 +9,6 @@
         public int TotalMateriales { get; set; }
         // Lista de materiales cuyo stock está por acabarse (bajo el mínimo), la llena el controlador.
         public List<material> MaterialesPorAcabarse { get; set; } = new();
-
-        // TODO: reemplazar cuando exista la tabla de ventas/pedidos.
-        // Por ahora se deja vacío para mostrar el estado "próximamente".
         public List<Modelo> ModelosMasVendidos { get; set; } = new();
     }
 }

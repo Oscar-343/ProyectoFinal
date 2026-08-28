@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ProyectoFinal.Data;
+using ProyectoFinal.Services;
+using ProyectoFinal.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,8 +12,12 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<TiendaDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
+builder.Services.AddScoped<IColaProduccionService, ColaProduccionService>();
+
 // Habilita el uso de Controladores + Vistas
 builder.Services.AddControllersWithViews();
+
+
 
 // Necesario para que HttpContext.Session funcione
 builder.Services.AddDistributedMemoryCache();

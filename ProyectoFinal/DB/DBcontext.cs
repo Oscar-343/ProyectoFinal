@@ -16,6 +16,8 @@ namespace ProyectoFinal.Data
         public DbSet<Modelo> Modelo { get; set; }
         public DbSet<Usuario> Usuario { get; set; }
         public DbSet<ModeloMaterial> ModeloMaterial { get; set; }
+        public DbSet<Pedido> Pedido { get; set; }
+        public DbSet<PedidoDetalle> PedidoDetalle { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

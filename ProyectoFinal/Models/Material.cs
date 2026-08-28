@@ -26,13 +26,13 @@ namespace ProyectoFinal.Models
         [Column("unidad_medida")]
         public string UnidadMedida { get; set; }
 
-        [Column("cantidad_disponible")]
+        [Column("cantidad_disponible", TypeName = "decimal(10,2)")]
         public decimal CantidadDisponible { get; set; }
 
-        [Column("precio_unitario")]
+        [Column("precio_unitario", TypeName = "decimal(10,2)")]
         public decimal PrecioUnitario { get; set; }
 
-        [Column("stock_minimo")]
+        [Column("stock_minimo", TypeName = "decimal(10,2)")]
         public decimal StockMinimo { get; set; }
 
         // Se calcula automáticamente en el controlador,

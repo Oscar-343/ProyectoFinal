@@ -1,0 +1,79 @@
+﻿@model ProyectoFinal.ViewModels.PedidoCreateViewModel
+
+<link rel="stylesheet" href="~/css/amigurumis.css" />
+
+<h2 class="titulo">Registrar pedido</h2>
+
+<div asp-validation-summary="All" style="color:#c0392b;font-size:12px;margin-bottom:12px"></div>
+
+@if (TempData["Error"] != null)
+{
+    <div style="background:#fdecea;color:#c0392b;padding:10px;border-radius:6px;margin-bottom:12px">@TempData["Error"]</div>
+}
+
+<div style="display:grid;grid-template-columns:1.2fr 1fr;gap:24px;align-items:start;max-width:950px">
+
+    <div>
+        <h3 style="font-size:15px;margin-bottom:8px">Modelos seleccionados</h3>
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+            <thead>
+                <tr style="text-align:left;border-bottom:2px solid var(--gris,#ddd)">
+                    <th style="padding:6px 4px">Modelo</th>
+                    <th style="padding:6px 4px">Cant.</th>
+                    <th style="padding:6px 4px">Tiempo (h)</th>
+                    <th style="padding:6px 4px">Precio</th>
+                    <th style="padding:6px 4px">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var d in Model.Detalles)
+                {
+                    <tr style="border-bottom:1px solid #eee">
+                        <td style="padding:6px 4px">@d.Nombre</td>
+                        <td style="padding:6px 4px">@d.Cantidad</td>
+                        <td style="padding:6px 4px">@d.TiempoProduccion</td>
+                        <td style="padding:6px 4px">Bs @d.PrecioVenta</td>
+                        <td style="padding:6px 4px">Bs @d.Subtotal</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div style="margin-top:10px;font-size:13px;color:#333">
+            <p style="margin:4px 0"><strong>Horas de producción totales:</strong> @Model.HorasProduccionTotal h</p>
+            <p style="margin:4px 0"><strong>Precio de venta total:</strong> Bs @Model.PrecioVentaTotal</p>
+        </div>
+
+        <a href="/Modelo/Catalogo" style="font-size:12px;color:#666">← Volver al catálogo para modificar la selección</a>
+    </div>
+
+    <div>
+        <form asp-action="Create" asp-controller="Pedido" method="post">
+            @Html.AntiForgeryToken()
+
+            <div style="margin-bottom:12px">
+                <label style="font-size:13px;font-weight:600">Cliente</label><br />
+                <input type="text" name="Cliente" value="@Model.Cliente" required
+                       style="width:100%;padding:6px;border:1px solid var(--gris,#ddd);border-radius:4px" />
+            </div>
+
+            <div style="margin-bottom:6px">
+                <label style="font-size:13px;font-weight:600">Fecha de inicio</label><br />
+                <input type="datetime-local" name="FechaInicio"
+                       value="@Model.FechaInicio.ToString("yyyy-MM-ddTHH:mm")"
+                       style="width:100%;padding:6px;border:1px solid var(--gris,#ddd);border-radius:4px" />
+            </div>
+
+            <p style="font-size:12px;color:#888;margin:0 0 16px">
+                La línea de producción está libre desde el
+                <strong>@Model.FechaInicioSugerida.ToString("dddd dd/MM/yyyy HH:mm")</strong>.
+                Si eliges una fecha anterior, el sistema la ajustará automáticamente a la
+                siguiente disponible. Horario de trabajo: 8:00 a 20:00, de lunes a sábado.
+            </p>
+
+            <button type="submit" class="btn-agregar" style="padding:8px 20px;font-size:13px">
+                Confirmar pedido
+            </button>
+        </form>
+    </div>
+</div>
