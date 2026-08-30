@@ -4,7 +4,11 @@ using ProyectoFinal.Models;
 
 namespace ProyectoFinal.Services
 {
-    // Calcula las fechas de producción de los pedidos.
+    // Calcula fechas de producción asumiendo UNA sola línea de producción secuencial.
+    // IMPORTANTE: los pedidos normales (Pedido) y los personalizados (PedidoPersonalizado)
+    // comparten la MISMA línea física, así que este servicio revisa las dos tablas juntas
+    // para saber cuándo se libera la cola. Si solo mirara una tabla, se podrían prometer
+    // fechas de entrega que en realidad ya están ocupadas por la otra.
     public class ColaProduccionService : IColaProduccionService
     {
         private readonly TiendaDbContext _context;
@@ -17,52 +21,47 @@ namespace ProyectoFinal.Services
             _context = context;
         }
 
-        // Obtiene la fecha de finalización del último pedido en cola.
+        // Fecha en la que termina el último pedido en cola (de cualquiera de las dos tablas),
+        // considerando solo los que siguen "activos" (pendiente o en producción).
         public DateTime ObtenerFechaFinCola()
         {
-            var ultimo = _context.Pedido
-                .Where(p => p.Estado == EstadoPedido.Pendiente ||
-                            p.Estado == EstadoPedido.EnProduccion)
-                .OrderByDescending(p => p.FechaEntrega)
-                .FirstOrDefault();
+            var maxPedidoNormal = _context.Pedido
+                .Where(p => p.Estado == EstadoPedido.Pendiente || p.Estado == EstadoPedido.EnProduccion)
+                .Select(p => (DateTime?)p.FechaEntrega)
+                .Max();
 
-            return ultimo?.FechaEntrega ?? DateTime.Now;
+            var maxPedidoPersonalizado = _context.PedidoPersonalizado
+                .Where(p => p.Estado == EstadoPedido.Pendiente || p.Estado == EstadoPedido.EnProduccion)
+                .Select(p => (DateTime?)p.FechaEntrega)
+                .Max();
+
+            var candidatos = new List<DateTime>();
+            if (maxPedidoNormal.HasValue) candidatos.Add(maxPedidoNormal.Value);
+            if (maxPedidoPersonalizado.HasValue) candidatos.Add(maxPedidoPersonalizado.Value);
+
+            return candidatos.Any() ? candidatos.Max() : DateTime.Now;
         }
 
-        // Calcula la fecha real de inicio y la fecha de entrega.
-        public (DateTime fechaInicioReal, DateTime fechaEntrega)
-            CalcularFechasPedido(
-                DateTime fechaInicioDeseada,
-                decimal horasTotales)
+        public (DateTime fechaInicioReal, DateTime fechaEntrega) CalcularFechasPedido(DateTime fechaInicioDeseada, decimal horasTotales)
         {
             var finCola = ObtenerFechaFinCola();
 
-            // El pedido inicia cuando la línea de producción esté disponible.
-            var inicioReal = fechaInicioDeseada > finCola
-                ? fechaInicioDeseada
-                : finCola;
-
+            var inicioReal = fechaInicioDeseada > finCola ? fechaInicioDeseada : finCola;
             inicioReal = AjustarAHorarioLaboral(inicioReal);
 
-            var entrega = CalcularFechaEntrega(
-                inicioReal,
-                horasTotales);
+            var entrega = CalcularFechaEntrega(inicioReal, horasTotales);
 
             return (inicioReal, entrega);
         }
 
-        // Calcula la fecha de entrega según las horas de producción.
-        private DateTime CalcularFechaEntrega(
-            DateTime fechaInicio,
-            decimal horasTotales)
+        private DateTime CalcularFechaEntrega(DateTime fechaInicio, decimal horasTotales)
         {
             var actual = AjustarAHorarioLaboral(fechaInicio);
             var horasRestantes = horasTotales;
 
             while (horasRestantes > 0)
             {
-                var horasDisponiblesHoy =
-                    (decimal)(HORA_FIN - actual.TimeOfDay).TotalHours;
+                var horasDisponiblesHoy = (decimal)(HORA_FIN - actual.TimeOfDay).TotalHours;
 
                 if (horasRestantes <= horasDisponiblesHoy)
                 {
@@ -72,40 +71,32 @@ namespace ProyectoFinal.Services
                 else
                 {
                     horasRestantes -= horasDisponiblesHoy;
-
-                    actual = SiguienteDiaLaboral(actual.Date)
-                        .Add(HORA_INICIO);
+                    actual = SiguienteDiaLaboral(actual.Date).Add(HORA_INICIO);
                 }
             }
 
             return actual;
         }
 
-        // Ajusta una fecha al horario de producción.
         private DateTime AjustarAHorarioLaboral(DateTime fecha)
         {
             if (fecha.DayOfWeek == DayOfWeek.Sunday)
-                return SiguienteDiaLaboral(fecha.Date)
-                    .Add(HORA_INICIO);
+                return SiguienteDiaLaboral(fecha.Date).Add(HORA_INICIO);
 
             if (fecha.TimeOfDay < HORA_INICIO)
                 return fecha.Date.Add(HORA_INICIO);
 
             if (fecha.TimeOfDay >= HORA_FIN)
-                return SiguienteDiaLaboral(fecha.Date)
-                    .Add(HORA_INICIO);
+                return SiguienteDiaLaboral(fecha.Date).Add(HORA_INICIO);
 
             return fecha;
         }
 
-        // Obtiene el siguiente día disponible para producción.
         private DateTime SiguienteDiaLaboral(DateTime fecha)
         {
             var siguiente = fecha.AddDays(1);
-
             while (siguiente.DayOfWeek == DayOfWeek.Sunday)
                 siguiente = siguiente.AddDays(1);
-
             return siguiente;
         }
     }

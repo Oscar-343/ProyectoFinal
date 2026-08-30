@@ -56,23 +56,23 @@ namespace ProyectoFinal.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(material material)
-        {
-           
-            ModelState.Remove("Estado");
-
-            if (ModelState.IsValid)
+            public IActionResult Create(material material)
             {
-                material.Estado = CalcularEstado(material);
+           
+                ModelState.Remove("Estado");
 
-                _context.Material.Add(material);
-                _context.SaveChanges();
+                if (ModelState.IsValid)
+                {
+                    material.Estado = CalcularEstado(material);
 
-                return RedirectToAction("Index");
+                    _context.Material.Add(material);
+                    _context.SaveChanges();
+
+                    return RedirectToAction("Index");
+                }
+
+                return View(material);
             }
-
-            return View(material);
-        }
 
         // Muestra el formulario de edición con los datos actuales del material.
         public IActionResult Edit(int id)

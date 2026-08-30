@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ProyectoFinal.Models
+namespace ProyectoFinal.ViewModels
 {
     // ViewModel que recibe los datos del formulario de inicio de sesión.
     public class LoginViewModel

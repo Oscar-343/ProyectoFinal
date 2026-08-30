@@ -1,0 +1,177 @@
+﻿@model ProyectoFinal.ViewModels.PedidoPersonalizadoCreateViewModel
+
+<link rel="stylesheet" href="~/css/amigurumis.css" />
+
+<h2 class="titulo">Pedido personalizado</h2>
+
+<div asp-validation-summary="All" style="color:#c0392b;font-size:12px;margin-bottom:12px"></div>
+
+<form asp-action="Create" asp-controller="PedidoPersonalizado" method="post" enctype="multipart/form-data" style="max-width:700px">
+    @Html.AntiForgeryToken()
+
+    <div style="margin-bottom:12px">
+        <label style="font-size:13px;font-weight:600">Cliente</label><br />
+        <input type="text" name="Cliente" value="@Model.Cliente" required
+               style="width:100%;padding:6px;border:1px solid var(--gris,#ddd);border-radius:4px" />
+    </div>
+
+    <div style="margin-bottom:12px">
+        <label style="font-size:13px;font-weight:600">Nombre de referencia</label><br />
+        <input type="text" name="NombreReferencia" value="@Model.NombreReferencia"
+               placeholder="Ej: Amigurumi Goku personalizado" required
+               style="width:100%;padding:6px;border:1px solid var(--gris,#ddd);border-radius:4px" />
+    </div>
+
+    <div style="margin-bottom:12px">
+        <label style="font-size:13px;font-weight:600">Descripción (opcional)</label><br />
+        <textarea name="Descripcion" rows="3"
+                  style="width:100%;padding:6px;border:1px solid var(--gris,#ddd);border-radius:4px">@Model.Descripcion</textarea>
+    </div>
+
+    <div style="margin-bottom:12px">
+        <label style="font-size:13px;font-weight:600">Imagen de referencia</label>
+        <div id="dropzone" style="border:2px dashed var(--gris,#ccc);border-radius:8px;padding:24px;
+            text-align:center;cursor:pointer;margin-top:4px" onclick="document.getElementById('inputImagen').click()">
+            <p id="dropzoneTexto" style="margin:0;color:#666;font-size:13px">
+                Arrastra una imagen aquí o haz click para seleccionar
+            </p>
+            <img id="previewImagen" style="display:none;max-width:100%;max-height:200px;margin-top:10px;border-radius:6px" />
+        </div>
+        <input type="file" id="inputImagen" name="ImagenArchivo" accept=".jpg,.jpeg,.png,.webp"
+               style="display:none" onchange="mostrarPreview(this)" />
+        <p style="font-size:11px;color:#999;margin:4px 0 0">Formatos: jpg, png, webp. Máximo 5MB.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+        <div>
+            <label style="font-size:13px;font-weight:600">Dificultad</label><br />
+            <select name="Dificultad" style="width:100%;padding:6px;border:1px solid var(--gris,#ddd);border-radius:4px">
+                <option value="Baja" selected="@(Model.Dificultad == "Baja")">Baja</option>
+                <option value="Media" selected="@(Model.Dificultad == "Media")">Media</option>
+                <option value="Alta" selected="@(Model.Dificultad == "Alta")">Alta</option>
+            </select>
+        </div>
+        <div>
+            <label style="font-size:13px;font-weight:600">Tiempo de producción estimado (horas)</label><br />
+            <input type="number" step="0.5" min="0.5" name="TiempoProduccion" value="@Model.TiempoProduccion" required
+                   style="width:100%;padding:6px;border:1px solid var(--gris,#ddd);border-radius:4px" />
+        </div>
+    </div>
+
+    <div style="margin-bottom:6px">
+        <label style="font-size:13px;font-weight:600">Fecha de inicio</label><br />
+        <input type="datetime-local" name="FechaInicio" value="@Model.FechaInicio.ToString("yyyy-MM-ddTHH:mm")"
+               style="width:100%;padding:6px;border:1px solid var(--gris,#ddd);border-radius:4px" />
+    </div>
+    <p style="font-size:12px;color:#888;margin:0 0 16px">
+        La línea de producción está libre desde el
+        <strong>@Model.FechaInicioSugerida.ToString("dddd dd/MM/yyyy HH:mm")</strong>.
+        Comparte la misma línea de producción que los pedidos del catálogo normal.
+    </p>
+
+    <!-- Materiales: mismo patrón de dropdown + cantidad + quitar que usa Modelo/Create -->
+    <div class="mb-3">
+        <label style="font-size:13px;font-weight:600">Materiales usados</label>
+
+        <div id="filas-materiales" style="margin-top:6px"></div>
+
+        <button type="button" id="btn-agregar-material" class="btn-secundario" style="margin-top:6px">
+            + Agregar material
+        </button>
+    </div>
+
+    <p style="font-size:12px;color:#888;margin:0 0 16px">
+        El costo (materiales + mano de obra) y el precio de venta se calculan automáticamente al guardar,
+        con la misma fórmula que usa el catálogo.
+    </p>
+
+    <button type="submit" class="btn-agregar" style="padding:8px 20px;font-size:13px">
+        Registrar pedido personalizado
+    </button>
+</form>
+
+<!-- Plantilla: el "molde" de una fila de material. Se clona con JS. -->
+<template id="plantilla-fila-material">
+    <div class="d-flex gap-2 mb-1 fila-material" style="display:flex;gap:8px;margin-bottom:6px">
+        <select name="materialesSeleccionados" class="form-control">
+            @foreach (var mat in (List<ProyectoFinal.Models.material>)ViewBag.Materiales)
+            {
+                <option value="@mat.IdMaterial">@mat.Nombre (@mat.Color) - Bs. @mat.PrecioUnitario / @mat.UnidadMedida</option>
+            }
+        </select>
+        <input type="number" name="cantidades" step="0.01" min="0.01" placeholder="Cantidad" class="form-control" style="max-width:120px" required />
+        <button type="button" class="btn-secundario btn-quitar-material">Quitar</button>
+    </div>
+</template>
+
+<script>
+    const dropzone = document.getElementById('dropzone');
+    const inputImagen = document.getElementById('inputImagen');
+
+    dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.style.borderColor = '#333';
+    });
+    dropzone.addEventListener('dragleave', () => {
+        dropzone.style.borderColor = '#ccc';
+    });
+    dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.style.borderColor = '#ccc';
+        if (e.dataTransfer.files.length > 0) {
+            inputImagen.files = e.dataTransfer.files;
+            mostrarPreview(inputImagen);
+        }
+    });
+
+    function mostrarPreview(input) {
+        const archivo = input.files[0];
+        if (!archivo) return;
+
+        const preview = document.getElementById('previewImagen');
+        const texto = document.getElementById('dropzoneTexto');
+        const lector = new FileReader();
+        lector.onload = e => {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+            texto.textContent = archivo.name;
+        };
+        lector.readAsDataURL(archivo);
+    }
+
+        // Clona la plantilla y, si se le pasan idMaterial/cantidad, prellena la fila
+        // (se usa para conservar la selección tras un error de validación).
+        function agregarFilaMaterial(idMaterial, cantidad) {
+            var plantilla = document.getElementById('plantilla-fila-material');
+            var clon = plantilla.content.cloneNode(true);
+
+            var select = clon.querySelector('select');
+            var inputCantidad = clon.querySelector('input');
+
+            if (idMaterial) select.value = idMaterial;
+            if (cantidad) inputCantidad.value = cantidad;
+
+            clon.querySelector('.btn-quitar-material').addEventListener('click', function (e) {
+                e.target.closest('.fila-material').remove();
+            });
+
+            document.getElementById('filas-materiales').appendChild(clon);
+        }
+
+        document.getElementById('btn-agregar-material').addEventListener('click', function () {
+            agregarFilaMaterial();
+        });
+
+        // Si venimos de un error de validación con materiales ya elegidos, los prellena.
+        // Si no, arranca con una fila vacía.
+        const seleccionPrevia = @Html.Raw(Json.Serialize(
+                        Model.MaterialesDisponibles.Select(m => new { id = m.IdMaterial, cantidad = m.Cantidad })));
+
+        if (seleccionPrevia.length > 0) {
+            seleccionPrevia.forEach(function (item) {
+                agregarFilaMaterial(item.id, item.cantidad);
+            });
+        } else {
+            agregarFilaMaterial();
+        }
+</script>

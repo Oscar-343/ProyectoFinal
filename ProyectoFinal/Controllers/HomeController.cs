@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProyectoFinal.Data;
 using ProyectoFinal.Models;
+using ProyectoFinal.ViewModels;
 using System.Diagnostics;
 using ProyectoFinal.Filters;
 

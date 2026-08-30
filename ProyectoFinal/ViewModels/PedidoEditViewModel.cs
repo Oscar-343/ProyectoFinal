@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using ProyectoFinal.Models;
 
-namespace ProyectoFinal.Models
+namespace ProyectoFinal.ViewModels
 {
     // Datos utilizados para editar un pedido.
     public class PedidoEditViewModel

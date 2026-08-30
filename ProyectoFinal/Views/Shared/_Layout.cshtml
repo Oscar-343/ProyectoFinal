@@ -57,14 +57,14 @@
                         <span class="nav-caret">▾</span>
                     </button>
 
-                    <div class="collapse @(ViewContext.RouteData.Values["controller"]?.ToString() == "Pedido" ? "show" : "")" id="pedidosSubmenu">
+                    <div class="collapse @(ViewContext.RouteData.Values["controller"]?.ToString() == "Pedido" || ViewContext.RouteData.Values["controller"]?.ToString() == "PedidoPersonalizado" ? "show" : "")" id="pedidosSubmenu">
                         <a class="nav-subitem" asp-controller="Pedido" asp-action="Index">
                             Todos los pedidos
                         </a>
                         <a class="nav-subitem" asp-controller="Pedido" asp-action="Index" asp-route-estado="Pendiente">
                             Pedidos pendientes
                         </a>
-                        <a class="nav-subitem nav-subitem-disabled" href="javascript:void(0)" title="Disponible próximamente">
+                        <a class="nav-subitem" asp-controller="PedidoPersonalizado" asp-action="Index">
                             Pedidos personalizados
                         </a>
                     </div>

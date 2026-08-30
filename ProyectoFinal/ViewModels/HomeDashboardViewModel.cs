@@ -1,4 +1,6 @@
-﻿namespace ProyectoFinal.Models
+﻿using ProyectoFinal.Models;
+
+namespace ProyectoFinal.ViewModels
 {
     // ViewModel que agrupa los datos que se muestran en el dashboard principal (Home).
     public class HomeDashboardViewModel

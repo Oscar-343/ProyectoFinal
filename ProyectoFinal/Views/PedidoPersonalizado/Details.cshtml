@@ -1,0 +1,74 @@
+﻿@model PedidoPersonalizado
+
+@{
+    ViewData["Title"] = "Detalle del pedido personalizado";
+    string estadoClase = Model.Estado.ToString().ToLowerInvariant();
+}
+
+<div class="content-header">
+    <h2>@Model.NombreReferencia</h2>
+    <div>
+        <a class="btn btn-secondary" asp-action="Edit" asp-route-id="@Model.IdPedidoPersonalizado">Editar</a>
+        <a class="btn btn-secondary" asp-action="Index">Volver</a>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.Imagen))
+{
+    <img src="@Model.Imagen" alt="@Model.NombreReferencia" style="max-width: 300px; border-radius: 8px; margin-bottom: 16px;" />
+}
+
+<dl class="row">
+    <dt class="col-sm-3">Cliente</dt>
+    <dd class="col-sm-9">@Model.Cliente</dd>
+
+    <dt class="col-sm-3">Descripción</dt>
+    <dd class="col-sm-9">@Model.Descripcion</dd>
+
+    <dt class="col-sm-3">Dificultad</dt>
+    <dd class="col-sm-9">@Model.Dificultad</dd>
+
+    <dt class="col-sm-3">Estado</dt>
+    <dd class="col-sm-9"><span class="badge estado-@estadoClase">@Model.Estado</span></dd>
+
+    <dt class="col-sm-3">Fecha de pedido</dt>
+    <dd class="col-sm-9">@Model.FechaPedido.ToString("dd/MM/yyyy HH:mm")</dd>
+
+    <dt class="col-sm-3">Fecha de inicio</dt>
+    <dd class="col-sm-9">@Model.FechaInicio.ToString("dd/MM/yyyy HH:mm")</dd>
+
+    <dt class="col-sm-3">Fecha de entrega</dt>
+    <dd class="col-sm-9">@Model.FechaEntrega.ToString("dddd dd/MM/yyyy HH:mm")</dd>
+
+    <dt class="col-sm-3">Tiempo de producción</dt>
+    <dd class="col-sm-9">@Model.TiempoProduccion horas</dd>
+
+    <dt class="col-sm-3">Costo</dt>
+    <dd class="col-sm-9">@Model.Costo.ToString("C")</dd>
+
+    <dt class="col-sm-3">Precio de venta</dt>
+    <dd class="col-sm-9">@Model.PrecioVenta.ToString("C")</dd>
+</dl>
+
+<h4>Materiales usados</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Material</th>
+            <th>Cantidad</th>
+            <th>Precio unitario</th>
+            <th>Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var m in Model.Materiales)
+        {
+            <tr>
+                <td>@m.Material?.Nombre</td>
+                <td>@m.Cantidad</td>
+                <td>@(m.Material?.PrecioUnitario.ToString("C") ?? "-")</td>
+                <td>@((m.Cantidad * (m.Material?.PrecioUnitario ?? 0)).ToString("C"))</td>
+            </tr>
+        }
+    </tbody>
+</table>

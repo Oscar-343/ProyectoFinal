@@ -1,0 +1,58 @@
+﻿@model List<PedidoPersonalizado>
+
+@{
+    ViewData["Title"] = "Pedidos personalizados";
+}
+
+<div class="content-header">
+    <h2>Pedidos personalizados</h2>
+    <a class="btn btn-primary" asp-action="Create">+ Nuevo pedido personalizado</a>
+</div>
+
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-success">@TempData["Mensaje"]</div>
+}
+
+@if (!Model.Any())
+{
+    <p>No hay pedidos personalizados para mostrar.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Referencia</th>
+                <th>Dificultad</th>
+                <th>Fecha de entrega</th>
+                <th>Estado</th>
+                <th>Precio</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pedido in Model)
+            {
+                string estadoClase = pedido.Estado.ToString().ToLowerInvariant();
+
+                <tr>
+                    <td>@pedido.Cliente</td>
+                    <td>@pedido.NombreReferencia</td>
+                    <td>@pedido.Dificultad</td>
+                    <td>@pedido.FechaEntrega.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        <span class="badge estado-@estadoClase">@pedido.Estado</span>
+                    </td>
+                    <td>@pedido.PrecioVenta.ToString("C")</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@pedido.IdPedidoPersonalizado">Ver</a> |
+                        <a asp-action="Edit" asp-route-id="@pedido.IdPedidoPersonalizado">Editar</a> |
+                        <a asp-action="Delete" asp-route-id="@pedido.IdPedidoPersonalizado">Eliminar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

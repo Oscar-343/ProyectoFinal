@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProyectoFinal.Data;
-using ProyectoFinal.Models;
+using ProyectoFinal.ViewModels;
 using System.Linq;
 
 namespace ProyectoFinal.Controllers

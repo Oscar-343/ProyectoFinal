@@ -26,17 +26,63 @@ namespace ProyectoFinal.Controllers
             _colaProduccion = colaProduccion;
         }
 
-        // Muestra los pedidos y permite filtrarlos por estado.
+        // Muestra los pedidos (normales + personalizados) y permite filtrarlos por estado.
         public async Task<IActionResult> Index(EstadoPedido? estado = null)
         {
-            var query = _context.Pedido
+            // 1. Trae los pedidos normales
+            var queryNormales = _context.Pedido
                 .Include(p => p.Detalles)
                     .ThenInclude(d => d.Modelo)
                 .AsQueryable();
 
             if (estado.HasValue)
+                queryNormales = queryNormales.Where(p => p.Estado == estado.Value);
+
+            var normales = await queryNormales.ToListAsync();
+
+            // 2. Trae los pedidos personalizados
+            var queryPersonalizados = _context.PedidoPersonalizado.AsQueryable();
+
+            if (estado.HasValue)
+                queryPersonalizados = queryPersonalizados.Where(p => p.Estado == estado.Value);
+
+            var personalizados = await queryPersonalizados.ToListAsync();
+
+            // 3. Convierte ambos a un mismo ViewModel
+            var listaNormales = normales.Select(p => new PedidoResumenViewModel
             {
-                query = query.Where(p => p.Estado == estado.Value);
+                Id = p.IdPedido,
+                Tipo = "Normal",
+                Cliente = p.Cliente,
+                Descripcion = string.Join(", ", p.Detalles.Select(d => $"{d.Modelo?.Nombre} x{d.Cantidad}")),
+                FechaPedido = p.FechaPedido,
+                FechaInicio = p.FechaInicio,
+                FechaEntrega = p.FechaEntrega,
+                Estado = p.Estado,
+                Total = p.PrecioVentaTotal
+            });
+
+            var listaPersonalizados = personalizados.Select(p => new PedidoResumenViewModel
+            {
+                Id = p.IdPedidoPersonalizado,
+                Tipo = "Personalizado",
+                Cliente = p.Cliente,
+                Descripcion = p.NombreReferencia,
+                FechaPedido = p.FechaPedido,
+                FechaInicio = p.FechaInicio,
+                FechaEntrega = p.FechaEntrega,
+                Estado = p.Estado,
+                Total = p.PrecioVenta
+            });
+
+            // 4. Combina y ordena
+            var pedidos = listaNormales
+                .Concat(listaPersonalizados)
+                .OrderByDescending(p => p.FechaPedido)
+                .ToList();
+
+            if (estado.HasValue)
+            {
                 ViewBag.TituloLista = $"Pedidos - {estado.Value}";
                 ViewBag.MostrarTiempoRestante = true;
             }
@@ -47,10 +93,6 @@ namespace ProyectoFinal.Controllers
             }
 
             ViewBag.EstadoFiltro = estado;
-
-            var pedidos = await query
-                .OrderByDescending(p => p.FechaPedido)
-                .ToListAsync();
 
             return View(pedidos);
         }
@@ -85,7 +127,6 @@ namespace ProyectoFinal.Controllers
             if (!seleccion.Any())
                 return BadRequest("Las cantidades deben ser mayores a cero.");
 
-            // Guarda temporalmente la selección en la sesión.
             HttpContext.Session.SetString(
                 SESSION_KEY_SELECCION,
                 JsonSerializer.Serialize(seleccion));
@@ -189,7 +230,6 @@ namespace ProyectoFinal.Controllers
                 });
             }
 
-            // Calcula las fechas según la cola de producción.
             var (fechaInicioReal, fechaEntrega) =
                 _colaProduccion.CalcularFechasPedido(
                     vm.FechaInicio,
@@ -208,7 +248,6 @@ namespace ProyectoFinal.Controllers
             _context.Pedido.Add(pedido);
             await _context.SaveChangesAsync();
 
-            // Limpia la selección después de guardar el pedido.
             HttpContext.Session.Remove(SESSION_KEY_SELECCION);
 
             TempData["Mensaje"] =
@@ -313,7 +352,6 @@ namespace ProyectoFinal.Controllers
                 });
             }
 
-            // Reemplaza los detalles anteriores.
             _context.PedidoDetalle.RemoveRange(pedido.Detalles);
 
             var (fechaInicioReal, fechaEntrega) =
@@ -384,7 +422,6 @@ namespace ProyectoFinal.Controllers
                 : $"{dias} días, {horas} horas";
         }
 
-        // Obtiene la selección guardada en la sesión.
         private List<SeleccionModeloDto>? ObtenerSeleccionDeSesion()
         {
             var json = HttpContext.Session
@@ -395,7 +432,6 @@ namespace ProyectoFinal.Controllers
                 : JsonSerializer.Deserialize<List<SeleccionModeloDto>>(json);
         }
 
-        // Prepara los datos necesarios para crear un pedido.
         private async Task<PedidoCreateViewModel> ArmarViewModelAsync(
             List<SeleccionModeloDto> seleccion,
             DateTime fechaInicioPropuesta)
@@ -443,7 +479,6 @@ namespace ProyectoFinal.Controllers
             };
         }
 
-        // Prepara los datos para editar un pedido.
         private async Task<PedidoEditViewModel> ArmarEditViewModelAsync(
             Pedido pedido)
         {

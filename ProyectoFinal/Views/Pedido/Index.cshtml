@@ -1,4 +1,4 @@
-﻿@model List<Pedido>
+﻿@model List<ProyectoFinal.ViewModels.PedidoResumenViewModel>
 
 @{
     ViewData["Title"] = ViewBag.TituloLista;
@@ -27,8 +27,9 @@ else
     <table class="table">
         <thead>
             <tr>
+                <th>Tipo</th>
                 <th>Cliente</th>
-                <th>Modelos</th>
+                <th>Descripción</th>
                 <th>Fecha de inicio</th>
                 <th>Fecha de entrega</th>
                 @if (ViewBag.MostrarTiempoRestante == true)
@@ -43,17 +44,24 @@ else
         <tbody>
             @foreach (var pedido in Model)
             {
-                // Estado es un enum (EstadoPedido); hay que pasarlo a texto
-                // antes de usar ToLower(), o revienta con CS7036.
                 string estadoClase = pedido.Estado.ToString().ToLowerInvariant();
                 string tiempoRestante = ViewBag.MostrarTiempoRestante == true
                     ? CalcularTiempoRestante(pedido.FechaEntrega)
                     : null;
-                string modelosTexto = string.Join(", ", pedido.Detalles.Select(d => $"{d.Modelo.Nombre} x{d.Cantidad}"));
 
                 <tr>
+                    <td>
+                        @if (pedido.Tipo == "Personalizado")
+                        {
+                            <span class="badge bg-info">Personalizado</span>
+                        }
+                        else
+                        {
+                            <span>Normal</span>
+                        }
+                    </td>
                     <td>@pedido.Cliente</td>
-                    <td>@modelosTexto</td>
+                    <td>@pedido.Descripcion</td>
                     <td>@pedido.FechaInicio.ToString("dd/MM/yyyy")</td>
                     <td>@pedido.FechaEntrega.ToString("dd/MM/yyyy")</td>
                     @if (ViewBag.MostrarTiempoRestante == true)
@@ -63,11 +71,20 @@ else
                     <td>
                         <span class="badge estado-@estadoClase">@pedido.Estado</span>
                     </td>
-                    <td>@pedido.PrecioVentaTotal.ToString("C")</td>
+                    <td>@pedido.Total.ToString("C")</td>
                     <td>
-                        <a asp-action="Details" asp-route-id="@pedido.IdPedido">Ver</a> |
-                        <a asp-action="Edit" asp-route-id="@pedido.IdPedido">Editar</a> |
-                        <a asp-action="Delete" asp-route-id="@pedido.IdPedido">Eliminar</a>
+                        @if (pedido.Tipo == "Normal")
+                        {
+                            <a asp-controller="Pedido" asp-action="Details" asp-route-id="@pedido.Id">Ver</a>
+                            <a asp-controller = "Pedido" asp-action = "Edit" asp-route-id = "@pedido.Id" > Editar </a >
+                            <a asp-controller = "Pedido" asp-action = "Delete" asp-route-id = "@pedido.Id" > Eliminar </a >
+}
+                        else
+                        {
+                            <a asp-controller="PedidoPersonalizado" asp-action="Details" asp-route-id="@pedido.Id">Ver</a>
+                            <a asp-controller = "PedidoPersonalizado" asp-action = "Edit" asp-route-id = "@pedido.Id" > Editar </a >
+                            <a asp-controller = "PedidoPersonalizado" asp-action = "Delete" asp-route-id = "@pedido.Id" > Eliminar </a >
+                        }
                     </td>
                 </tr>
             }

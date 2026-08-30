@@ -1,0 +1,138 @@
+﻿@model PedidoPersonalizadoEditViewModel
+@using System.Text.Json
+
+@{
+    ViewData["Title"] = "Editar pedido personalizado";
+}
+
+<h2>Editar pedido personalizado</h2>
+
+<form asp-action="Edit" asp-route-id="@Model.IdPedidoPersonalizado" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="IdPedidoPersonalizado" />
+    <input type="hidden" asp-for="ImagenActual" />
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    @if (!string.IsNullOrEmpty(Model.ImagenActual))
+    {
+        <div class="mb-3">
+            <label>Imagen actual</label><br />
+            <img src="@Model.ImagenActual" style="max-width: 200px; border-radius: 8px;" />
+        </div>
+    }
+
+    <div class="form-group mb-3">
+        <label>Nueva imagen (opcional, reemplaza a la actual)</label>
+        <input asp-for="ImagenArchivo" type="file" class="form-control" accept=".jpg,.jpeg,.png,.webp" />
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Cliente"></label>
+        <input asp-for="Cliente" class="form-control" />
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="NombreReferencia"></label>
+        <input asp-for="NombreReferencia" class="form-control" />
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Descripcion"></label>
+        <textarea asp-for="Descripcion" class="form-control"></textarea>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Dificultad"></label>
+        <select asp-for="Dificultad" class="form-control">
+            <option value="Baja">Baja</option>
+            <option value="Media">Media</option>
+            <option value="Alta">Alta</option>
+        </select>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="TiempoProduccion"></label>
+        <input asp-for="TiempoProduccion" type="number" step="0.5" class="form-control" />
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="FechaInicio"></label>
+        <input asp-for="FechaInicio" type="datetime-local" class="form-control" />
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Estado"></label>
+        <select asp-for="Estado" class="form-control"
+                asp-items="Html.GetEnumSelectList<EstadoPedido>()"></select>
+    </div>
+
+    <!-- Materiales: mismo patrón de dropdown + cantidad + quitar que usa Modelo/Create -->
+    <div class="mb-3">
+        <label>Materiales usados</label>
+
+        <div id="filas-materiales"></div>
+
+        <button type="button" id="btn-agregar-material" class="btn-secundario" style="margin-top:6px">
+            + Agregar material
+        </button>
+
+        <p style="color:#777; font-size:13px; margin-top:6px">
+            El costo y el precio de venta se recalculan automáticamente al guardar,
+            según los materiales elegidos, el tiempo de producción y la dificultad.
+        </p>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar cambios</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
+
+<!-- Plantilla: el "molde" de una fila de material. Se clona con JS. -->
+<template id="plantilla-fila-material">
+    <div class="d-flex gap-2 mb-1 fila-material" style="display:flex;gap:8px;margin-bottom:6px">
+        <select name="materialesSeleccionados" class="form-control">
+            @foreach (var mat in (List<ProyectoFinal.Models.material>)ViewBag.Materiales)
+            {
+                <option value="@mat.IdMaterial">@mat.Nombre (@mat.Color) - Bs. @mat.PrecioUnitario / @mat.UnidadMedida</option>
+            }
+        </select>
+        <input type="number" name="cantidades" step="0.01" min="0.01" placeholder="Cantidad" class="form-control" style="max-width:120px" required />
+        <button type="button" class="btn-secundario btn-quitar-material">Quitar</button>
+    </div>
+</template>
+
+<script>
+    // Clona la plantilla y, si se le pasan idMaterial/cantidad, prellena la fila
+    // (se usa así para los materiales que el pedido ya tenía).
+    function agregarFilaMaterial(idMaterial, cantidad) {
+        var plantilla = document.getElementById('plantilla-fila-material');
+        var clon = plantilla.content.cloneNode(true);
+
+        var select = clon.querySelector('select');
+        var inputCantidad = clon.querySelector('input');
+
+        if (idMaterial) select.value = idMaterial;
+        if (cantidad) inputCantidad.value = cantidad;
+
+        clon.querySelector('.btn-quitar-material').addEventListener('click', function(e) {
+            e.target.closest('.fila-material').remove();
+        });
+
+        document.getElementById('filas-materiales').appendChild(clon);
+    }
+
+    document.getElementById('btn-agregar-material').addEventListener('click', function() {
+        agregarFilaMaterial();
+    });
+
+    // Prellena las filas con los materiales que el pedido ya tenía guardados.
+    const seleccionInicial = @Html.Raw(JsonSerializer.Serialize(
+                        Model.MaterialesDisponibles.Select(m => new { id = m.IdMaterial, cantidad = m.Cantidad })));
+
+    if (seleccionInicial.length > 0) {
+        seleccionInicial.forEach(function(item) {
+            agregarFilaMaterial(item.id, item.cantidad);
+        });
+    } else {
+        agregarFilaMaterial(); // arranca con una fila vacía si es un pedido sin materiales aún
+    }
+</script>
