@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ProyectoFinal.Data;
+using ProyectoFinal.Service;
 using ProyectoFinal.Services;
 using ProyectoFinal.Services;
 
@@ -16,6 +17,7 @@ builder.Services.AddScoped<IColaProduccionService, ColaProduccionService>();
 
 // Habilita el uso de Controladores + Vistas
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IReporteService, ReporteService>();
 
 
 

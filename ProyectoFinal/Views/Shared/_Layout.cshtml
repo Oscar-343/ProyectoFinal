@@ -70,9 +70,10 @@
                     </div>
                 </div>
 
-                <span class="nav-item" style="opacity:.4;cursor:not-allowed">
+                <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Reporte" ? "active" : "")"
+                   asp-area="" asp-controller="Reporte" asp-action="Index">
                     <span class="nav-bracket"></span>Reportes<span class="nav-bracket"></span>
-                </span>
+                </a>
             </nav>
 
             <div class="sidebar-footer">
