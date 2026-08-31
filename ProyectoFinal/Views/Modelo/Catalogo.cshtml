@@ -1,88 +1,111 @@
 ﻿@model IEnumerable<ProyectoFinal.Models.Modelo>
 
-<link rel="stylesheet" href="~/css/amigurumis.css" />
+@{
+    ViewData["Title"] = "Catálogo";
+}
 
 @Html.AntiForgeryToken()
 
-<h2 class="titulo">Catálogo de amigurumis</h2>
-
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">
-    @foreach (var m in Model)
-    {
-        <div class="card-modelo">
-            <img src="@m.Imagen" />
-            <div class="cuerpo">
-                <strong>@m.Nombre</strong>
-                <span class="badge-dificultad @m.Dificultad.ToLower()">@m.Dificultad</span>
-                <p>@m.Descripcion</p>
-
-                <p style="font-size:12px;color:#999;margin:4px 0">
-                    Tiempo de producción: @m.TiempoProduccion h
-                </p>
-
-                <div class="tabla-precios">
-                    <div class="fila"><span>Precio venta</span><span>Bs @m.PrecioVenta</span></div>
-                    <div class="fila"><span>Costo</span><span>Bs @m.Costo</span></div>
-                    <div class="fila utilidad"><span>Utilidad</span><span>Bs @m.Utilidad</span></div>
-                </div>
-
-                <div style="margin-top:10px;border-top:1px solid var(--gris);padding-top:8px">
-                    <p style="font-size:12px;color:#999;margin:0 0 4px;font-weight:700">Materiales usados</p>
-
-                    @if (m.ModeloMateriales != null && m.ModeloMateriales.Any())
-                    {
-                        <ul style="font-size:12px;color:#555;margin:0;padding-left:16px">
-                            @foreach (var mm in m.ModeloMateriales)
-                            {
-                                <li>
-                                    @mm.Material.Nombre - @mm.Material.Color
-                                    (@mm.Cantidad @mm.Material.UnidadMedida)
-                                </li>
-                            }
-                        </ul>
-                    }
-                    else
-                    {
-                        <p style="font-size:12px;color:#aaa;margin:0">Sin materiales registrados aún.</p>
-                    }
-                </div>
-                <div style="margin-top:10px;border-top:1px solid var(--gris);padding-top:8px;display:flex;align-items:center;justify-content:space-between">
-                    <div style="display:flex;align-items:center;gap:6px">
-                        <input type="number" id="cantidad-@m.IdModelo" value="1" min="1"
-                               style="width:50px;padding:2px 4px;border:1px solid var(--gris);border-radius:4px;font-size:12px" />
-                        <button type="button" class="btn-agregar" style="padding:4px 10px;font-size:11px"
-                                onclick="agregarAlCarrito(@m.IdModelo, '@m.Nombre', document.getElementById('cantidad-@m.IdModelo').value)">
-                            + Agregar
-                        </button>
-                        <button type="button" style="padding:4px 10px;font-size:11px;background:#eee;border:1px solid var(--gris);border-radius:4px;cursor:pointer"
-                                onclick="quitarUnoDelCarrito(@m.IdModelo)">
-                            − Quitar
-                        </button>
-                    </div>
-                    <span id="carrito-cantidad-@m.IdModelo" style="font-size:12px;color:#666">En carrito: <strong>0</strong></span>
-                </div>
-            </div>
-        </div>
-    }
+<div class="page-header">
+    <h1 class="page-title">Catálogo de amigurumis</h1>
+    <p class="page-eyebrow">Elige los modelos y cantidades para armar el pedido</p>
 </div>
 
-<!-- Barra flotante del carrito -->
-<div id="barra-carrito" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;
-    border-top:2px solid var(--gris,#ddd);box-shadow:0 -2px 8px rgba(0,0,0,.1);padding:12px 20px;z-index:1000">
-    <div style="display:flex;align-items:center;justify-content:space-between;max-width:900px;margin:0 auto;flex-wrap:wrap;gap:10px">
-        <div id="resumen-carrito" style="font-size:13px;color:#333"></div>
-        <div style="display:flex;gap:10px;align-items:center">
-            <span id="error-carrito" style="color:#c0392b;font-size:12px"></span>
-            <button type="button" onclick="enviarCarrito()" class="btn-agregar" style="padding:8px 16px;font-size:13px">
-                Registrar pedido con estos modelos
-            </button>
-        </div>
+<div class="catalogo-layout">
+
+    <!-- ===== GRID DE MODELOS ===== -->
+    <div class="catalogo-grid">
+        @foreach (var m in Model)
+        {
+            <div class="card-modelo">
+                <img src="@m.Imagen" />
+                <div class="cuerpo">
+                    <strong>@m.Nombre</strong>
+                    <span class="badge-dificultad @m.Dificultad.ToLower()">@m.Dificultad</span>
+                    <p>@m.Descripcion</p>
+
+                    <p style="font-size:12px;color:var(--texto-suave);margin:4px 0">
+                        Tiempo de producción: @m.TiempoProduccion h
+                    </p>
+
+                    <div class="tabla-precios">
+                        <div class="fila"><span>Precio venta</span><span>Bs @m.PrecioVenta</span></div>
+                        <div class="fila"><span>Costo</span><span>Bs @m.Costo</span></div>
+                        <div class="fila utilidad"><span>Utilidad</span><span>Bs @m.Utilidad</span></div>
+                    </div>
+
+                    <div class="materiales-usados">
+                        <p class="etiqueta">Materiales usados</p>
+
+                        @if (m.ModeloMateriales != null && m.ModeloMateriales.Any())
+                        {
+                            <ul>
+                                @foreach (var mm in m.ModeloMateriales)
+                                {
+                                    <li>
+                                        @mm.Material.Nombre - @mm.Material.Color
+                                        (@mm.Cantidad @mm.Material.UnidadMedida)
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <p style="font-size:12px;color:var(--texto-suave);margin:0">Sin materiales registrados aún.</p>
+                        }
+                    </div>
+
+                    <!-- Stepper de cantidad: + caja − -->
+                    <div class="cantidad-control">
+                        <button type="button" class="qty-icon-btn agregar" title="Agregar al carrito"
+                                onclick="agregarAlCarrito(@m.IdModelo, '@m.Nombre', document.getElementById('cantidad-@m.IdModelo').value)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                        </button>
+
+                        <input type="number" id="cantidad-@m.IdModelo" value="1" min="1" class="cantidad-input" />
+
+                        <button type="button" class="qty-icon-btn quitar" title="Quitar del carrito"
+                                onclick="quitarUnoDelCarrito(@m.IdModelo)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                        </button>
+                    </div>
+                    <span id="carrito-cantidad-@m.IdModelo" class="en-carrito">En carrito: <strong>0</strong></span>
+                </div>
+            </div>
+        }
     </div>
+
+    <!-- ===== CARRITO LATERAL ===== -->
+    <aside class="catalogo-carrito" id="barra-carrito" style="display:none;">
+        <div class="carrito-header">
+            <span class="carrito-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="21" r="1" />
+                    <circle cx="20" cy="21" r="1" />
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                </svg>
+            </span>
+            <span class="carrito-titulo">Carrito</span>
+            <span class="carrito-total-badge" id="carrito-total-badge">0</span>
+        </div>
+
+        <div class="carrito-lista" id="resumen-carrito"></div>
+
+        <span class="carrito-error" id="error-carrito"></span>
+
+        <button type="button" onclick="enviarCarrito()" class="btn-pastel carrito-btn">
+            Registrar pedido
+        </button>
+    </aside>
 </div>
 
 <script>
     // Carrito en memoria: { idModelo: { nombre, cantidad } }
     const carrito = {};
+
+    function totalItemsCarrito() {
+        return Object.values(carrito).reduce((acc, item) => acc + item.cantidad, 0);
+    }
 
     function agregarAlCarrito(idModelo, nombre, cantidad) {
         cantidad = parseInt(cantidad, 10);
@@ -100,7 +123,7 @@
         actualizarBarraCarrito();
     }
 
-    // Resta del carrito la cantidad que esté en el input de esa card (mismo valor que usa "+ Agregar").
+    // Resta del carrito la cantidad que esté en el input de esa card (mismo valor que usa el botón +).
     // Si llega a 0 o menos, el modelo se quita por completo del carrito.
     function quitarUnoDelCarrito(idModelo) {
         if (!carrito[idModelo]) return;
@@ -123,7 +146,8 @@
 
     function quitarDelCarrito(idModelo) {
         delete carrito[idModelo];
-        document.getElementById('carrito-cantidad-' + idModelo).innerHTML = 'En carrito: <strong>0</strong>';
+        const span = document.getElementById('carrito-cantidad-' + idModelo);
+        if (span) span.innerHTML = 'En carrito: <strong>0</strong>';
         actualizarBarraCarrito();
     }
 
@@ -131,17 +155,24 @@
         const ids = Object.keys(carrito);
         const barra = document.getElementById('barra-carrito');
         const resumen = document.getElementById('resumen-carrito');
+        const badge = document.getElementById('carrito-total-badge');
+
+        badge.textContent = totalItemsCarrito();
 
         if (ids.length === 0) {
             barra.style.display = 'none';
             return;
         }
 
-        barra.style.display = 'block';
-        resumen.innerHTML = ids.map(id =>
-            `${carrito[id].nombre} x${carrito[id].cantidad}
-                 <a href="#" onclick="quitarDelCarrito(${id});return false;" style="color:#c0392b;margin-left:4px">✕</a>`
-        ).join(' &nbsp;|&nbsp; ');
+        barra.style.display = 'flex';
+
+        resumen.innerHTML = ids.map(id => `
+                <div class="carrito-item">
+                    <span class="nombre">${carrito[id].nombre}</span>
+                    <span class="cantidad">x${carrito[id].cantidad}</span>
+                    <button type="button" class="quitar-item" onclick="quitarDelCarrito(${id})" title="Quitar">✕</button>
+                </div>
+            `).join('');
     }
 
     async function enviarCarrito() {

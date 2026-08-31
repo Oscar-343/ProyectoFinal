@@ -4,25 +4,27 @@
     ViewData["Title"] = "Reportes";
 }
 
-<h2>Reportes</h2>
-<p class="text-muted">Selecciona un rango de fechas para ver el resumen financiero.</p>
+<div class="page-header">
+    <h1 class="page-title">Reportes</h1>
+    <p class="page-eyebrow">Selecciona un rango de fechas para ver el resumen financiero</p>
+</div>
 
-<form asp-controller="Reporte" asp-action="Index" method="get" class="row g-3 mb-4 align-items-end">
-    <div class="col-auto">
-        <label class="form-label">Desde</label>
-        <input type="date" name="desde" value="@ViewBag.Desde" class="form-control" required />
+<form asp-controller="Reporte" asp-action="Index" method="get" class="reporte-filtro-box">
+    <div class="campo-fecha">
+        <label>Desde</label>
+        <input type="date" name="desde" value="@ViewBag.Desde" required />
     </div>
-    <div class="col-auto">
-        <label class="form-label">Hasta</label>
-        <input type="date" name="hasta" value="@ViewBag.Hasta" class="form-control" required />
+    <div class="campo-fecha">
+        <label>Hasta</label>
+        <input type="date" name="hasta" value="@ViewBag.Hasta" required />
     </div>
-    <div class="col-auto">
-        <button type="submit" class="btn btn-outline-primary">🔍 Ver reporte</button>
-    </div>
+    <button type="submit" class="btn-pastel">
+        Ver reporte
+    </button>
 </form>
 
 <!-- ===== RESUMEN FINANCIERO ===== -->
-<div class="finance-summary mb-4">
+<div class="finance-summary">
     <div class="finance-card finance-ingresos">
         <span class="finance-label">Dinero ingresado</span>
         <span class="finance-value">@Model.IngresosTotales.ToString("C")</span>
@@ -61,83 +63,74 @@
 }
 
 <!-- ===== DATOS COMPLEMENTARIOS ===== -->
-<div class="row g-3">
-    <div class="col-md-3">
-        <div class="card p-3 h-100">
-            <span class="text-uppercase text-muted small">Pedidos realizados</span>
-            <h4 class="mt-2 mb-0">@Model.PedidosRealizados</h4>
-        </div>
+<div class="metric-grid">
+    <div class="card-modelo metric-card">
+        <p class="metric-label">Pedidos realizados</p>
+        <p class="metric-value">@Model.PedidosRealizados</p>
     </div>
-    <div class="col-md-3">
-        <div class="card p-3 h-100">
-            <span class="text-uppercase text-muted small">Ticket promedio</span>
-            <h4 class="mt-2 mb-0">@Model.TicketPromedio.ToString("C")</h4>
-        </div>
+    <div class="card-modelo metric-card">
+        <p class="metric-label">Ticket promedio</p>
+        <p class="metric-value">@Model.TicketPromedio.ToString("C")</p>
     </div>
-    <div class="col-md-3">
-        <div class="card p-3 h-100">
-            <span class="text-uppercase text-muted small">Horas trabajadas</span>
-            <h4 class="mt-2 mb-0">@Model.HorasTrabajadas</h4>
-        </div>
+    <div class="card-modelo metric-card">
+        <p class="metric-label">Horas trabajadas</p>
+        <p class="metric-value">@Model.HorasTrabajadas</p>
     </div>
-    <div class="col-md-3">
-        <div class="card p-3 h-100">
-            <span class="text-uppercase text-muted small">Ganancia por hora</span>
-            <h4 class="mt-2 mb-0">@Model.UtilidadPorHora.ToString("C")</h4>
-        </div>
-    </div>
-
-    <div class="col-md-6">
-        <div class="card p-3 h-100">
-            <span class="text-uppercase text-muted small">Modelo más vendido</span>
-            <h5 class="mt-2 mb-0">@Model.ModeloMasVendido</h5>
-            <span class="text-muted">@Model.CantidadMasVendido unidades</span>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="card p-3 h-100">
-            <span class="text-uppercase text-muted small">Modelo más rentable</span>
-            <h5 class="mt-2 mb-0">@Model.ModeloMasRentable</h5>
-            <span class="text-muted">@Model.UtilidadModeloMasRentable.ToString("C") de ganancia</span>
-        </div>
+    <div class="card-modelo metric-card">
+        <p class="metric-label">Ganancia por hora</p>
+        <p class="metric-value">@Model.UtilidadPorHora.ToString("C")</p>
     </div>
 </div>
 
-<!-- ===== PEDIDOS NORMALES ===== -->
+<div class="reporte-destacado">
+    <div class="card-modelo">
+        <p class="metric-label">Modelo más vendido</p>
+        <h5>@Model.ModeloMasVendido</h5>
+        <span class="section-empty">@Model.CantidadMasVendido unidades</span>
+    </div>
+    <div class="card-modelo">
+        <p class="metric-label">Modelo más rentable</p>
+        <h5>@Model.ModeloMasRentable</h5>
+        <span class="section-empty">@Model.UtilidadModeloMasRentable.ToString("C") de ganancia</span>
+    </div>
+</div>
+
 @{
     var normales = Model.Pedidos.Where(p => p.Tipo == "Normal").ToList();
     var personalizados = Model.Pedidos.Where(p => p.Tipo == "Personalizado").ToList();
 }
 
-<div class="mt-5">
+<!-- ===== PEDIDOS NORMALES ===== -->
+<div class="reporte-seccion">
     <h4>Pedidos</h4>
     @if (!normales.Any())
     {
-        <p class="text-muted">No hay pedidos en este periodo.</p>
+        <p class="section-empty">No hay pedidos en este periodo.</p>
     }
     else
     {
-        <table class="table table-striped table-bordered">
-            <thead class="table-dark">
+        <table class="tabla-pastel">
+            <thead>
                 <tr>
-                    <th>N.° PEDIDO</th>
-                    <th>CLIENTE</th>
-                    <th>FECHA PEDIDO</th>
-                    <th>FECHA ENTREGA</th>
-                    <th>ESTADO</th>
-                    <th>HORAS</th>
-                    <th>TOTAL</th>
+                    <th>N.° Pedido</th>
+                    <th>Cliente</th>
+                    <th>Fecha pedido</th>
+                    <th>Fecha entrega</th>
+                    <th>Estado</th>
+                    <th>Horas</th>
+                    <th>Total</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var p in normales)
                 {
+                    string estadoClase = p.Estado.ToString().ToLowerInvariant();
                     <tr>
-                        <td>P@(p.IdPedido.ToString("D4"))</td>
+                        <td style="font-weight:600;">P@(p.IdPedido.ToString("D4"))</td>
                         <td>@p.Cliente</td>
                         <td>@p.FechaPedido.ToString("dd/MM/yyyy")</td>
                         <td>@p.FechaEntrega.ToString("dd/MM/yyyy")</td>
-                        <td>@p.Estado</td>
+                        <td><span class="badge-estado-pedido estado-@estadoClase">@p.Estado</span></td>
                         <td>@p.Horas</td>
                         <td>@p.Total.ToString("C")</td>
                     </tr>
@@ -148,35 +141,36 @@
 </div>
 
 <!-- ===== PEDIDOS PERSONALIZADOS ===== -->
-<div class="mt-5">
-    <h4>Pedidos Personalizados</h4>
+<div class="reporte-seccion">
+    <h4>Pedidos personalizados</h4>
     @if (!personalizados.Any())
     {
-        <p class="text-muted">No hay pedidos personalizados en este periodo.</p>
+        <p class="section-empty">No hay pedidos personalizados en este periodo.</p>
     }
     else
     {
-        <table class="table table-striped table-bordered">
-            <thead class="table-dark">
+        <table class="tabla-pastel">
+            <thead>
                 <tr>
-                    <th>N.° PEDIDO</th>
-                    <th>CLIENTE</th>
-                    <th>FECHA PEDIDO</th>
-                    <th>FECHA ENTREGA</th>
-                    <th>ESTADO</th>
-                    <th>HORAS</th>
-                    <th>TOTAL</th>
+                    <th>N.° Pedido</th>
+                    <th>Cliente</th>
+                    <th>Fecha pedido</th>
+                    <th>Fecha entrega</th>
+                    <th>Estado</th>
+                    <th>Horas</th>
+                    <th>Total</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var p in personalizados)
                 {
+                    string estadoClase = p.Estado.ToString().ToLowerInvariant();
                     <tr>
-                        <td>P@(p.IdPedido.ToString("D4"))</td>
+                        <td style="font-weight:600;">P@(p.IdPedido.ToString("D4"))</td>
                         <td>@p.Cliente</td>
                         <td>@p.FechaPedido.ToString("dd/MM/yyyy")</td>
                         <td>@p.FechaEntrega.ToString("dd/MM/yyyy")</td>
-                        <td>@p.Estado</td>
+                        <td><span class="badge-estado-pedido estado-@estadoClase">@p.Estado</span></td>
                         <td>@p.Horas</td>
                         <td>@p.Total.ToString("C")</td>
                     </tr>
@@ -190,7 +184,7 @@
 <form asp-controller="Reporte" asp-action="ExportarExcel" method="post" class="mt-4">
     <input type="hidden" name="desde" value="@ViewBag.Desde" />
     <input type="hidden" name="hasta" value="@ViewBag.Hasta" />
-    <button type="submit" class="btn btn-success">
-        📊 Descargar en Excel
+    <button type="submit" class="btn-exportar">
+        Descargar en Excel
     </button>
 </form>

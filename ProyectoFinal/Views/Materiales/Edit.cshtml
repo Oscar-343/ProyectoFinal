@@ -1,53 +1,63 @@
 ﻿@model ProyectoFinal.Models.material
 
-<h2 class="titulo">Editar material</h2>
-<p style="color:#777;font-size:14px">Modifique los datos que desea actualizar.</p>
+@{
+    ViewData["Title"] = "Editar material";
+}
 
-<form asp-action="Edit" class="form-pastel" style="max-width:420px">
-    <input type="hidden" asp-for="IdMaterial" />
+<div class="page-header">
+    <h1 class="page-title">Editar material</h1>
+    <p class="page-eyebrow">Modifica los datos que deseas actualizar</p>
+</div>
 
-    <div class="mb-2">
-        <label>Nombre del material</label>
-        <input asp-for="Nombre" class="form-control" placeholder="Ejemplo: Lana acrílica" />
-        <span asp-validation-for="Nombre" class="text-danger"></span>
-    </div>
+<div class="form-box">
+    <form asp-action="Edit" class="form-pastel">
+        <input type="hidden" asp-for="IdMaterial" />
 
-    <div class="mb-2">
-        <label>Tipo de material</label>
-        <input asp-for="Tipo" class="form-control" placeholder="Ejemplo: Hilo" />
-        <span asp-validation-for="Tipo" class="text-danger"></span>
-    </div>
+        <div class="mb-2">
+            <label>Nombre del material</label>
+            <input asp-for="Nombre" placeholder="Ejemplo: Lana acrílica" />
+            <span asp-validation-for="Nombre" class="text-danger"></span>
+        </div>
 
-    <div class="mb-2">
-        <label>Color</label>
-        <input asp-for="Color" class="form-control" placeholder="Ejemplo: Rosado" />
-        <span asp-validation-for="Color" class="text-danger"></span>
-    </div>
+        <div class="mb-2">
+            <label>Tipo de material</label>
+            <input asp-for="Tipo" placeholder="Ejemplo: Hilo" />
+            <span asp-validation-for="Tipo" class="text-danger"></span>
+        </div>
 
-    <div class="mb-2">
-        <label>Unidad de medida</label>
-        <input asp-for="UnidadMedida" class="form-control" placeholder="Ejemplo: Ovillo" />
-        <span asp-validation-for="UnidadMedida" class="text-danger"></span>
-    </div>
+        <div class="mb-2">
+            <label>Color</label>
+            <input asp-for="Color" placeholder="Ejemplo: Rosado" />
+            <span asp-validation-for="Color" class="text-danger"></span>
+        </div>
 
-    <div class="mb-2">
-        <label>Cantidad disponible</label>
-        <input asp-for="CantidadDisponible" type="number" step="0.01" class="form-control" />
-        <small>Ingrese la cantidad que tiene actualmente.</small>
-    </div>
+        <div class="mb-2">
+            <label>Unidad de medida</label>
+            <input asp-for="UnidadMedida" placeholder="Ejemplo: Ovillo" />
+            <span asp-validation-for="UnidadMedida" class="text-danger"></span>
+        </div>
 
-    <div class="mb-2">
-        <label>Precio por unidad (Bs.)</label>
-        <input asp-for="PrecioUnitario" type="number" step="0.01" class="form-control" />
-        <small>Precio de una unidad del material.</small>
-    </div>
+        <div class="mb-2">
+            <label>Cantidad disponible</label>
+            <input asp-for="CantidadDisponible" type="number" step="0.01" />
+            <small>Ingrese la cantidad que tiene actualmente.</small>
+        </div>
 
-    <div class="mb-3">
-        <label>Stock mínimo</label>
-        <input asp-for="StockMinimo" type="number" step="0.01" class="form-control" />
-        <small>Cantidad mínima que desea mantener.</small>
-    </div>
+        <div class="mb-2">
+            <label>Precio por unidad (Bs.)</label>
+            <input asp-for="PrecioUnitario" type="number" step="0.01" />
+            <small>Precio de una unidad del material.</small>
+        </div>
 
-    <button type="submit" class="btn-pastel">Guardar cambios</button>
-    <a asp-action="Index" class="btn-secundario">Cancelar</a>
-</form>
+        <div class="mb-3">
+            <label>Stock mínimo</label>
+            <input asp-for="StockMinimo" type="number" step="0.01" />
+            <small>Cantidad mínima que desea mantener.</small>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn-pastel">Guardar cambios</button>
+            <a asp-action="Index" class="btn-secundario">Cancelar</a>
+        </div>
+    </form>
+</div>

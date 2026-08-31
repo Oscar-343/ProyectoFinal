@@ -16,7 +16,7 @@
         <!-- ===== SIDEBAR ===== -->
         <aside class="sidebar">
             <div class="sidebar-brand">
-                <span class="brand-mark">◆</span>
+                <img src="~/images/logo-amigurumis.png" alt="Amigurumis Luna" class="brand-logo" />
                 <div class="brand-text">
                     <span class="brand-title">AMIGURUMIS</span>
                     <span class="brand-subtitle">LUNA</span>
@@ -31,29 +31,31 @@
             <nav class="sidebar-nav">
                 <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")"
                    asp-area="" asp-controller="Home" asp-action="Index">
-                    <span class="nav-bracket"></span>Inicio<span class="nav-bracket"></span>
+                    Inicio
                 </a>
 
-                <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Modelo" ? "active" : "")"
+                <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Modelo" && ViewContext.RouteData.Values["action"]?.ToString() != "Catalogo" ? "active" : "")"
                    asp-area="" asp-controller="Modelo" asp-action="Index">
-                    <span class="nav-bracket"></span>Modelos<span class="nav-bracket"></span>
+                    Modelos
                 </a>
 
                 <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Materiales" ? "active" : "")"
                    asp-area="" asp-controller="Materiales" asp-action="Index">
-                    <span class="nav-bracket"></span>Materiales<span class="nav-bracket"></span>
+                    Materiales
                 </a>
 
-                <a class="nav-item" asp-area="" asp-controller="Modelo" asp-action="Catalogo">
-                    <span class="nav-bracket"></span>Catálogo<span class="nav-bracket"></span>
+                <a class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Catalogo" ? "active" : "")"
+                   asp-area="" asp-controller="Modelo" asp-action="Catalogo">
+                    Catálogo
                 </a>
 
                 <!-- Dropdown de Pedidos -->
                 <div class="nav-group">
                     <button class="nav-item nav-item-toggle" type="button"
                             data-bs-toggle="collapse" data-bs-target="#pedidosSubmenu"
-                            aria-expanded="false" aria-controls="pedidosSubmenu">
-                        <span class="nav-bracket"></span>Pedidos<span class="nav-bracket"></span>
+                            aria-expanded="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Pedido" || ViewContext.RouteData.Values["controller"]?.ToString() == "PedidoPersonalizado" ? "true" : "false")"
+                            aria-controls="pedidosSubmenu">
+                        Pedidos
                         <span class="nav-caret">▾</span>
                     </button>
 
@@ -72,23 +74,18 @@
 
                 <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Reporte" ? "active" : "")"
                    asp-area="" asp-controller="Reporte" asp-action="Index">
-                    <span class="nav-bracket"></span>Reportes<span class="nav-bracket"></span>
+                    Reportes
                 </a>
             </nav>
 
             <div class="sidebar-footer">
                 <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                <span>&copy; 2026 ProyectoFinal</span>
+                <span>&copy; 2026 Amigurumis Luna</span>
             </div>
         </aside>
 
         <!-- ===== CONTENIDO ===== -->
         <div class="main-wrapper">
-            <header class="topbar">
-                <button class="sidebar-toggle" type="button" id="sidebarToggle" aria-label="Toggle menu">☰</button>
-                <span class="topbar-title">@ViewData["Title"]</span>
-            </header>
-
             <main role="main" class="content-area">
                 @RenderBody()
             </main>

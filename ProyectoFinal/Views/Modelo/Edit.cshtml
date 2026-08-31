@@ -1,98 +1,102 @@
 ﻿@model ProyectoFinal.Models.Modelo
 @{
     var seleccionActual = (List<ProyectoFinal.Models.ModeloMaterial>)ViewBag.MaterialesSeleccionadosActuales;
+    ViewData["Title"] = "Editar modelo";
 }
 
-<link rel="stylesheet" href="~/css/amigurumis.css" />
+<div class="page-header">
+    <h1 class="page-title">Editar modelo</h1>
+    <p class="page-eyebrow">Actualiza los datos de este diseño de amigurumi</p>
+</div>
 
-<h2 class="titulo">Editar modelo</h2>
+<div class="form-box form-box-ancho">
+    <form asp-action="Edit" method="post" class="form-pastel">
+        <input type="hidden" asp-for="IdModelo" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-<form asp-action="Edit" method="post" style="max-width:480px">
-    <input type="hidden" asp-for="IdModelo" />
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-    <div class="mb-2">
-        <label asp-for="Nombre"></label>
-        <input asp-for="Nombre" class="form-control" />
-        <span asp-validation-for="Nombre" class="text-danger"></span>
-    </div>
-
-    <div class="mb-2">
-        <label asp-for="Descripcion"></label>
-        <textarea asp-for="Descripcion" class="form-control"></textarea>
-        <span asp-validation-for="Descripcion" class="text-danger"></span>
-    </div>
-
-    <div class="mb-2">
-        <label asp-for="Imagen">URL de imagen</label>
-        <input asp-for="Imagen" class="form-control" />
-        <span asp-validation-for="Imagen" class="text-danger"></span>
-    </div>
-
-    <div class="mb-2">
-        <label asp-for="Dificultad"></label>
-        <select asp-for="Dificultad" class="form-control">
-            <option value="Baja">Baja</option>
-            <option value="Media">Media</option>
-            <option value="Alta">Alta</option>
-        </select>
-        <span asp-validation-for="Dificultad" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="TiempoProduccion">Tiempo de producción (horas)</label>
-        <input asp-for="TiempoProduccion" type="number" step="0.5" class="form-control" />
-        <span asp-validation-for="TiempoProduccion" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label>Materiales usados</label>
-
-        <div id="filas-materiales">
-            @foreach (var actual in seleccionActual)
-            {
-                <div class="d-flex gap-2 mb-1 fila-material" style="display:flex;gap:8px;margin-bottom:6px">
-                    <select name="materialesSeleccionados" class="form-control">
-                        @foreach (var mat in (List<ProyectoFinal.Models.material>)ViewBag.Materiales)
-                        {
-                            if (mat.IdMaterial == actual.IdMaterial)
-                            {
-                                <option value="@mat.IdMaterial" selected>@mat.Nombre - @mat.Color (Bs. @mat.PrecioUnitario / @mat.UnidadMedida)</option>
-                            }
-                            else
-                            {
-                                <option value="@mat.IdMaterial">@mat.Nombre - @mat.Color (Bs. @mat.PrecioUnitario / @mat.UnidadMedida)</option>
-                            }
-                        }
-                    </select>
-                    <input type="number" name="cantidades" step="0.01" min="0.01" value="@actual.Cantidad" class="form-control" style="max-width:120px" required />
-                    <button type="button" class="btn-secundario btn-quitar-material">Quitar</button>
-                </div>
-            }
+        <div class="mb-2">
+            <label asp-for="Nombre"></label>
+            <input asp-for="Nombre" />
+            <span asp-validation-for="Nombre" class="text-danger"></span>
         </div>
 
-        <button type="button" id="btn-agregar-material" class="btn-secundario" style="margin-top:6px">
-            + Agregar material
-        </button>
+        <div class="mb-2">
+            <label asp-for="Descripcion"></label>
+            <textarea asp-for="Descripcion"></textarea>
+            <span asp-validation-for="Descripcion" class="text-danger"></span>
+        </div>
 
-        <p style="color:#777; font-size:13px; margin-top:6px">
-            Costo actual: Bs @Model.Costo — Precio de venta actual: Bs @Model.PrecioVenta
-            (se recalculan al guardar).
-        </p>
-    </div>
+        <div class="mb-2">
+            <label asp-for="Imagen">URL de imagen</label>
+            <input asp-for="Imagen" />
+            <span asp-validation-for="Imagen" class="text-danger"></span>
+        </div>
 
-    <button type="submit" class="btn-pastel">Guardar cambios</button>
-</form>
+        <div class="mb-2">
+            <label asp-for="Dificultad"></label>
+            <select asp-for="Dificultad">
+                <option value="Baja">Baja</option>
+                <option value="Media">Media</option>
+                <option value="Alta">Alta</option>
+            </select>
+            <span asp-validation-for="Dificultad" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="TiempoProduccion">Tiempo de producción (horas)</label>
+            <input asp-for="TiempoProduccion" type="number" step="0.5" />
+            <span asp-validation-for="TiempoProduccion" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label>Materiales usados</label>
+
+            <div id="filas-materiales">
+                @foreach (var actual in seleccionActual)
+                {
+                    <div class="fila-material">
+                        <select name="materialesSeleccionados">
+                            @foreach (var mat in (List<ProyectoFinal.Models.material>)ViewBag.Materiales)
+                            {
+                                if (mat.IdMaterial == actual.IdMaterial)
+                                {
+                                    <option value="@mat.IdMaterial" selected>@mat.Nombre - @mat.Color (Bs. @mat.PrecioUnitario / @mat.UnidadMedida)</option>
+                                }
+                                else
+                                {
+                                    <option value="@mat.IdMaterial">@mat.Nombre - @mat.Color (Bs. @mat.PrecioUnitario / @mat.UnidadMedida)</option>
+                                }
+                            }
+                        </select>
+                        <input type="number" name="cantidades" step="0.01" min="0.01" value="@actual.Cantidad" required />
+                        <button type="button" class="btn-secundario btn-quitar-material">Quitar</button>
+                    </div>
+                }
+            </div>
+
+            <button type="button" id="btn-agregar-material" class="btn-secundario" style="margin-top:6px">
+                + Agregar material
+            </button>
+
+            <p style="color:var(--texto-suave); font-size:12.5px; margin-top:8px">
+                Costo actual: Bs @Model.Costo — Precio de venta actual: Bs @Model.PrecioVenta
+                (se recalculan al guardar).
+            </p>
+        </div>
+
+        <button type="submit" class="btn-pastel">Guardar cambios</button>
+    </form>
+</div>
 
 <template id="plantilla-fila-material">
-    <div class="d-flex gap-2 mb-1 fila-material" style="display:flex;gap:8px;margin-bottom:6px">
-        <select name="materialesSeleccionados" class="form-control">
+    <div class="fila-material">
+        <select name="materialesSeleccionados">
             @foreach (var mat in (List<ProyectoFinal.Models.material>)ViewBag.Materiales)
             {
                 <option value="@mat.IdMaterial">@mat.Nombre - @mat.Color (Bs. @mat.PrecioUnitario / @mat.UnidadMedida)</option>
             }
         </select>
-        <input type="number" name="cantidades" step="0.01" min="0.01" placeholder="Cantidad" class="form-control" style="max-width:120px" required />
+        <input type="number" name="cantidades" step="0.01" min="0.01" placeholder="Cantidad" required />
         <button type="button" class="btn-secundario btn-quitar-material">Quitar</button>
     </div>
 </template>

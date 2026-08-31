@@ -9,55 +9,148 @@
 <html lang="es">
 <head>
     <meta charset="utf-8" />
-    <title>Iniciar Sesión</title>
-    <link href="https://fonts.googleapis.com/css2?family=Comfortaa&family=Quicksand&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Amigurumis Luna</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-            body {
-                background-color: #ECECEC;
-                font-family: 'Quicksand', sans-serif;
-                text-align: center;
-                padding-top: 80px;
+            :root {
+                --rosa: #F8BBD0;
+                --lila: #CE93D8;
+                --lila-deep: #9C4FAF;
+                --celeste: #B3E5FC;
+                --crema: #FFF8E1;
+                --gris: #ECECEC;
+                --texto: #5B4B63;
             }
 
-            h2 {
-                font-family: 'Comfortaa', cursive;
-                color: #CE93D8;
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                margin: 0;
+                min-height: 100vh;
+                font-family: 'Quicksand', sans-serif;
+                color: var(--texto);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                /* Imagen de fondo: reemplaza wwwroot/images/login-bg.jpg por la tuya */
+                background-image: linear-gradient(160deg, rgba(206,147,216,.55), rgba(248,187,208,.5) 45%, rgba(179,229,252,.55)), url('/images/login-bg.jpg');
+                background-size: cover;
+                background-position: center;
+                background-color: var(--crema); /* respaldo si aún no existe la imagen */
             }
 
             .caja-login {
-                background-color: #FFF8E1;
-                width: 300px;
-                margin: auto;
-                padding: 30px;
-                border-radius: 15px;
+                background-color: rgba(255, 248, 225, 0.88);
+                backdrop-filter: blur(6px);
+                width: 100%;
+                max-width: 340px;
+                margin: 24px;
+                padding: 40px 34px 34px;
+                border-radius: 22px;
+                text-align: center;
+                box-shadow: 0 18px 40px -12px rgba(156, 79, 175, .45);
+            }
+
+            .login-logo {
+                width: 72px;
+                height: 72px;
+                border-radius: 50%;
+                object-fit: cover;
+                background-color: #fff;
+                box-shadow: 0 6px 16px -4px rgba(156, 79, 175, .4);
+                margin-bottom: 14px;
+            }
+
+                .login-logo:not([src]), .login-logo[src=""] {
+                    display: none;
+                }
+
+            h1.login-titulo {
+                font-family: 'Comfortaa', sans-serif;
+                font-weight: 700;
+                font-size: 24px;
+                color: var(--lila-deep);
+                margin: 0 0 4px;
+            }
+
+            .login-subtitulo {
+                font-size: 12.5px;
+                color: #9C8AA0;
+                margin: 0 0 26px;
+            }
+
+            .campo {
+                text-align: left;
+                margin-bottom: 16px;
+            }
+
+            label {
+                display: block;
+                font-size: 12.5px;
+                font-weight: 600;
+                color: var(--texto);
+                margin-bottom: 5px;
             }
 
             input {
-                width: 90%;
-                padding: 10px;
-                margin-bottom: 15px;
-                border: 2px solid #B3E5FC;
-                border-radius: 8px;
+                width: 100%;
+                padding: 11px 14px;
+                border: 2px solid var(--celeste);
+                border-radius: 10px;
+                font-family: 'Quicksand', sans-serif;
+                font-size: 14px;
+                background-color: #fff;
+                transition: border-color .15s ease, box-shadow .15s ease;
             }
+
+                input:focus {
+                    outline: none;
+                    border-color: var(--lila);
+                    box-shadow: 0 0 0 3px rgba(206,147,216,.25);
+                }
 
             button {
-                background-color: #F8BBD0;
-                padding: 10px 20px;
+                width: 100%;
+                background-color: var(--rosa);
+                padding: 12px 20px;
                 border: none;
-                border-radius: 8px;
-                font-family: 'Comfortaa', cursive;
+                border-radius: 10px;
+                font-family: 'Comfortaa', sans-serif;
+                font-weight: 700;
+                font-size: 14px;
+                color: #880E4F;
                 cursor: pointer;
+                margin-top: 6px;
+                transition: background-color .15s ease, color .15s ease, box-shadow .15s ease;
             }
 
+                button:hover {
+                    background-color: var(--lila);
+                    color: #fff;
+                    box-shadow: 0 8px 18px -6px rgba(156, 79, 175, .5);
+                }
+
             .error {
-                color: red;
+                background-color: #FFCDD2;
+                color: #B71C1C;
+                border-radius: 10px;
+                padding: 9px 12px;
+                font-size: 12.5px;
+                font-weight: 600;
+                margin: 0 0 18px;
             }
     </style>
 </head>
 <body>
 
     <div class="caja-login">
-        <h2>Iniciar Sesión</h2>
+        <img src="~/images/logo-amigurumis.png" alt="Amigurumis Luna" class="login-logo" />
+
+        <h1 class="login-titulo">Amigurumis Luna</h1>
+        <p class="login-subtitulo">Panel de administración</p>
 
         @if (ViewBag.Error != null)
         {
@@ -65,11 +158,15 @@
         }
 
         <form asp-controller="Account" asp-action="Login" method="post">
-            <label>Usuario</label><br />
-            <input asp-for="NombreUsuario" /><br />
+            <div class="campo">
+                <label>Usuario</label>
+                <input asp-for="NombreUsuario" />
+            </div>
 
-            <label>Contraseña</label><br />
-            <input asp-for="Password" type="password" /><br />
+            <div class="campo">
+                <label>Contraseña</label>
+                <input asp-for="Password" type="password" />
+            </div>
 
             <button type="submit">Ingresar</button>
         </form>

@@ -1,56 +1,62 @@
 ﻿@model ProyectoFinal.Models.material
 
-<link rel="stylesheet" href="~/css/amigurumis.css" />
+@{
+    ViewData["Title"] = "Registrar material";
+}
 
-<h2 class="titulo">Registrar material</h2>
-<p style="color:#777;font-size:14px">
-    Complete los datos del material que desea registrar.
-</p>
+<div class="page-header">
+    <h1 class="page-title">Registrar material</h1>
+    <p class="page-eyebrow">Completa los datos del material que deseas registrar</p>
+</div>
 
-<form asp-action="Create" class="form-pastel" style="max-width:420px">
+<div class="form-box">
+    <form asp-action="Create" class="form-pastel">
 
-    <div class="mb-2">
-        <label>Nombre del material</label>
-        <input asp-for="Nombre" class="form-control" placeholder="Ejemplo: Lana acrílica" />
-        <span asp-validation-for="Nombre" class="text-danger"></span>
-    </div>
+        <div class="mb-2">
+            <label>Nombre del material</label>
+            <input asp-for="Nombre" placeholder="Ejemplo: Lana acrílica" />
+            <span asp-validation-for="Nombre" class="text-danger"></span>
+        </div>
 
-    <div class="mb-2">
-        <label>Tipo de material</label>
-        <input asp-for="Tipo" class="form-control" placeholder="Ejemplo: Hilo" />
-        <span asp-validation-for="Tipo" class="text-danger"></span>
-    </div>
+        <div class="mb-2">
+            <label>Tipo de material</label>
+            <input asp-for="Tipo" placeholder="Ejemplo: Hilo" />
+            <span asp-validation-for="Tipo" class="text-danger"></span>
+        </div>
 
-    <div class="mb-2">
-        <label>Color</label>
-        <input asp-for="Color" class="form-control" placeholder="Ejemplo: Rosado" />
-        <span asp-validation-for="Color" class="text-danger"></span>
-    </div>
+        <div class="mb-2">
+            <label>Color</label>
+            <input asp-for="Color" placeholder="Ejemplo: Rosado" />
+            <span asp-validation-for="Color" class="text-danger"></span>
+        </div>
 
-    <div class="mb-2">
-        <label>Unidad de medida</label>
-        <input asp-for="UnidadMedida" class="form-control" placeholder="Ejemplo: Ovillo" />
-        <span asp-validation-for="UnidadMedida" class="text-danger"></span>
-    </div>
+        <div class="mb-2">
+            <label>Unidad de medida</label>
+            <input asp-for="UnidadMedida" placeholder="Ejemplo: Ovillo" />
+            <span asp-validation-for="UnidadMedida" class="text-danger"></span>
+        </div>
 
-    <div class="mb-2">
-        <label>Cantidad disponible</label>
-        <input asp-for="CantidadDisponible" type="number" step="0.01" class="form-control" placeholder="Ejemplo: 10" />
-        <small>Ingrese la cantidad disponible actualmente.</small>
-    </div>
+        <div class="mb-2">
+            <label>Cantidad disponible</label>
+            <input asp-for="CantidadDisponible" type="number" step="0.01" placeholder="Ejemplo: 10" />
+            <small>Ingrese la cantidad disponible actualmente.</small>
+        </div>
 
-    <div class="mb-2">
-        <label>Precio por unidad (Bs.)</label>
-        <input asp-for="PrecioUnitario" type="number" step="0.01" class="form-control" placeholder="Ejemplo: 18.00" />
-        <small>Ingrese el precio de una unidad del material.</small>
-    </div>
+        <div class="mb-2">
+            <label>Precio por unidad (Bs.)</label>
+            <input asp-for="PrecioUnitario" type="number" step="0.01" placeholder="Ejemplo: 18.00" />
+            <small>Ingrese el precio de una unidad del material.</small>
+        </div>
 
-    <div class="mb-3">
-        <label>Stock mínimo</label>
-        <input asp-for="StockMinimo" type="number" step="0.01" class="form-control" placeholder="Ejemplo: 5" />
-        <small>Cantidad mínima que desea mantener disponible.</small>
-    </div>
+        <div class="mb-3">
+            <label>Stock mínimo</label>
+            <input asp-for="StockMinimo" type="number" step="0.01" placeholder="Ejemplo: 5" />
+            <small>Cantidad mínima que desea mantener disponible.</small>
+        </div>
 
-    <button type="submit" class="btn-pastel">Guardar material</button>
-    <a asp-action="Index" class="btn-secundario">Cancelar</a>
-</form>
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn-pastel">Guardar material</button>
+            <a asp-action="Index" class="btn-secundario">Cancelar</a>
+        </div>
+    </form>
+</div>

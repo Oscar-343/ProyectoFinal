@@ -3,8 +3,10 @@
     ViewData["Title"] = "Inicio";
 }
 
-<h2 class="titulo">Amigurumis Luna — panel de administración</h2>
-<p class="dashboard-subtitle">Sesión activa: @ViewBag.NombreUsuario</p>
+<div class="page-header">
+    <h1 class="page-title">Amigurumis Luna</h1>
+    <p class="page-eyebrow">Panel de administración</p>
+</div>
 
 <!-- Métricas generales -->
 <div class="metric-grid">
@@ -24,7 +26,7 @@
 
 <!-- Materiales por acabarse -->
 <div class="card-modelo section-card">
-    <h5 class="titulo">Materiales por acabarse</h5>
+    <h5>Materiales por acabarse</h5>
 
     @if (Model.MaterialesPorAcabarse.Any())
     {
@@ -41,7 +43,7 @@
                 {
                     <tr>
                         <td>@mat.Nombre</td>
-                        <td style="color:#C62828">@mat.CantidadDisponible @mat.UnidadMedida</td>
+                        <td style="color:#C2185B; font-weight:600;">@mat.CantidadDisponible @mat.UnidadMedida</td>
                         <td>@mat.StockMinimo @mat.UnidadMedida</td>
                     </tr>
                 }
