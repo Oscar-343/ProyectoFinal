@@ -50,7 +50,7 @@
                         <input type="hidden" asp-for="ModelosDisponibles[i].PrecioVenta" />
                     </td>
                     <td>@Model.ModelosDisponibles[i].TiempoProduccion</td>
-                    <td>@Model.ModelosDisponibles[i].PrecioVenta.ToString("C")</td>
+                    <td>@Model.ModelosDisponibles[i].PrecioVenta.ToString("Bs. ")</td>
                     <td>
                         <input asp-for="ModelosDisponibles[i].Cantidad" type="number" min="0" class="form-control" style="width: 80px" />
                     </td>

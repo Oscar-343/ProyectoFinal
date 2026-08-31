@@ -44,10 +44,10 @@
     <dd class="col-sm-9">@Model.TiempoProduccion horas</dd>
 
     <dt class="col-sm-3">Costo</dt>
-    <dd class="col-sm-9">@Model.Costo.ToString("C")</dd>
+    <dd class="col-sm-9">@Model.Costo.ToString("Bs. ")</dd>
 
     <dt class="col-sm-3">Precio de venta</dt>
-    <dd class="col-sm-9">@Model.PrecioVenta.ToString("C")</dd>
+    <dd class="col-sm-9">@Model.PrecioVenta.ToString("Bs. ")</dd>
 </dl>
 
 <h4>Materiales usados</h4>
@@ -66,8 +66,8 @@
             <tr>
                 <td>@m.Material?.Nombre</td>
                 <td>@m.Cantidad</td>
-                <td>@(m.Material?.PrecioUnitario.ToString("C") ?? "-")</td>
-                <td>@((m.Cantidad * (m.Material?.PrecioUnitario ?? 0)).ToString("C"))</td>
+                <td>@(m.Material?.PrecioUnitario.ToString("Bs. ") ?? "-")</td>
+                <td>@((m.Cantidad * (m.Material?.PrecioUnitario ?? 0)).ToString("Bs. "))</td>
             </tr>
         }
     </tbody>

@@ -21,14 +21,13 @@ namespace ProyectoFinal.Service
                     .ThenInclude(d => d.Modelo)
                         .ThenInclude(m => m.ModeloMateriales)
                             .ThenInclude(mm => mm.Material)
-                .Where(p => p.FechaPedido >= desde && p.FechaPedido <= hasta)
+                .Where(p => p.FechaPedido >= desde && p.FechaPedido < hasta.AddDays(1))
                 .ToListAsync();
 
-            // === 2. Pedidos personalizados del rango ===
             var personalizadosEnRango = await _context.PedidoPersonalizado
                 .Include(pp => pp.Materiales)
                     .ThenInclude(m => m.Material)
-                .Where(pp => pp.FechaPedido >= desde && pp.FechaPedido <= hasta)
+                .Where(pp => pp.FechaPedido >= desde && pp.FechaPedido < hasta.AddDays(1))
                 .ToListAsync();
 
             var detalles = pedidosEnRango.SelectMany(p => p.Detalles).ToList();

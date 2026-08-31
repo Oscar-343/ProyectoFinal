@@ -27,7 +27,7 @@
 <div class="finance-summary">
     <div class="finance-card finance-ingresos">
         <span class="finance-label">Dinero ingresado</span>
-        <span class="finance-value">@Model.IngresosTotales.ToString("C")</span>
+        <span class="finance-value">@Model.IngresosTotales.ToString("Bs. ")</span>
         <span class="finance-hint">Ventas del periodo</span>
     </div>
 
@@ -35,7 +35,7 @@
 
     <div class="finance-card finance-gastos">
         <span class="finance-label">Gasto en materiales</span>
-        <span class="finance-value">@Model.GastoMateriales.ToString("C")</span>
+        <span class="finance-value">@Model.GastoMateriales.ToString("Bs. ")</span>
         <span class="finance-hint">Costo de producción</span>
     </div>
 
@@ -43,7 +43,7 @@
 
     <div class="finance-card finance-ganancia">
         <span class="finance-label">Ganancia neta</span>
-        <span class="finance-value">@Model.UtilidadTotal.ToString("C")</span>
+        <span class="finance-value">@Model.UtilidadTotal.ToString("Bs. ")</span>
         <span class="finance-hint">Margen: @Model.MargenUtilidad.ToString("0.0")%</span>
     </div>
 </div>
@@ -70,7 +70,7 @@
     </div>
     <div class="card-modelo metric-card">
         <p class="metric-label">Ticket promedio</p>
-        <p class="metric-value">@Model.TicketPromedio.ToString("C")</p>
+        <p class="metric-value">@Model.TicketPromedio.ToString("Bs. ")</p>
     </div>
     <div class="card-modelo metric-card">
         <p class="metric-label">Horas trabajadas</p>
@@ -78,7 +78,7 @@
     </div>
     <div class="card-modelo metric-card">
         <p class="metric-label">Ganancia por hora</p>
-        <p class="metric-value">@Model.UtilidadPorHora.ToString("C")</p>
+        <p class="metric-value">@Model.UtilidadPorHora.ToString("Bs. ")</p>
     </div>
 </div>
 
@@ -91,7 +91,7 @@
     <div class="card-modelo">
         <p class="metric-label">Modelo más rentable</p>
         <h5>@Model.ModeloMasRentable</h5>
-        <span class="section-empty">@Model.UtilidadModeloMasRentable.ToString("C") de ganancia</span>
+        <span class="section-empty">@Model.UtilidadModeloMasRentable.ToString("Bs. ") de ganancia</span>
     </div>
 </div>
 
@@ -133,7 +133,7 @@
                             <td>@p.FechaEntrega.ToString("dd/MM/yyyy")</td>
                             <td><span class="badge-estado-pedido estado-@estadoClase">@p.Estado</span></td>
                             <td>@p.Horas</td>
-                            <td>@p.Total.ToString("C")</td>
+                            <td>@p.Total.ToString("Bs. ")</td>
                         </tr>
                     }
                 </tbody>
@@ -175,7 +175,7 @@
                             <td>@p.FechaEntrega.ToString("dd/MM/yyyy")</td>
                             <td><span class="badge-estado-pedido estado-@estadoClase">@p.Estado</span></td>
                             <td>@p.Horas</td>
-                            <td>@p.Total.ToString("C")</td>
+                            <td>@p.Total.ToString("Bs. ")</td>
                         </tr>
                     }
                 </tbody>

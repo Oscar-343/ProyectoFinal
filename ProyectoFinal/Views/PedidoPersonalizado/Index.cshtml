@@ -52,7 +52,7 @@ else
                         <td>
                             <span class="badge-estado-pedido estado-@estadoClase">@pedido.Estado</span>
                         </td>
-                        <td>@pedido.PrecioVenta.ToString("C")</td>
+                        <td>@pedido.PrecioVenta.ToString("Bs. ")</td>
                         <td>
                             <div class="icon-actions">
                                 <a asp-action="Details" asp-route-id="@pedido.IdPedidoPersonalizado" class="icon-btn ver" title="Ver">
