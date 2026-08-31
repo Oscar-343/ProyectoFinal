@@ -84,8 +84,19 @@
             </div>
         </aside>
 
+        <!-- Fondo oscuro que aparece detrás del menú cuando está abierto en celular; tocarlo lo cierra. -->
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
         <!-- ===== CONTENIDO ===== -->
         <div class="main-wrapper">
+            <!-- Barra solo visible en celular/tablet, con el botón para abrir el menú. -->
+            <div class="mobile-topbar">
+                <button id="sidebarToggle" class="sidebar-toggle" type="button" aria-label="Abrir menú" aria-controls="sidebarNav" aria-expanded="false">
+                    ☰
+                </button>
+                <span class="mobile-topbar-brand">Amigurumis Luna</span>
+            </div>
+
             <main role="main" class="content-area">
                 @RenderBody()
             </main>
@@ -96,9 +107,35 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script>
-            document.getElementById('sidebarToggle')?.addEventListener('click', function() {
-                document.querySelector('.app-shell').classList.toggle('sidebar-collapsed');
-            });
+            (function() {
+                var appShell = document.querySelector('.app-shell');
+                var toggle = document.getElementById('sidebarToggle');
+                var backdrop = document.getElementById('sidebarBackdrop');
+
+                function abrirMenu() {
+                    appShell.classList.add('sidebar-collapsed');
+                    toggle?.setAttribute('aria-expanded', 'true');
+                }
+
+                function cerrarMenu() {
+                    appShell.classList.remove('sidebar-collapsed');
+                    toggle?.setAttribute('aria-expanded', 'false');
+                }
+
+                toggle?.addEventListener('click', function() {
+                    appShell.classList.contains('sidebar-collapsed') ? cerrarMenu() : abrirMenu();
+                });
+
+                // Tocar fuera del menú (el fondo oscuro) lo cierra.
+                backdrop?.addEventListener('click', cerrarMenu);
+
+                // En celular, al elegir una opción del menú, se cierra solo.
+                document.querySelectorAll('.nav-item:not(.nav-item-toggle), .nav-subitem').forEach(function(link) {
+                    link.addEventListener('click', function() {
+                        if (window.innerWidth <= 900) cerrarMenu();
+                    });
+                });
+            })();
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

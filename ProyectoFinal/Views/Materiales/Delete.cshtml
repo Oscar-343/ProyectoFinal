@@ -7,28 +7,30 @@
     <strong>Advertencia:</strong> esta acción eliminará el material de la base de datos.
 </div>
 
-<table class="tabla-pastel" style="max-width:420px">
-    <tr>
-        <th>Nombre</th>
-        <td>@Model.Nombre</td>
-    </tr>
-    <tr>
-        <th>Tipo</th>
-        <td>@Model.Tipo</td>
-    </tr>
-    <tr>
-        <th>Color</th>
-        <td>@Model.Color</td>
-    </tr>
-    <tr>
-        <th>Cantidad disponible</th>
-        <td>@Model.CantidadDisponible</td>
-    </tr>
-    <tr>
-        <th>Precio</th>
-        <td>Bs. @Model.PrecioUnitario</td>
-    </tr>
-</table>
+<div class="tabla-responsive">
+    <table class="tabla-pastel" style="max-width:420px">
+        <tr>
+            <th>Nombre</th>
+            <td>@Model.Nombre</td>
+        </tr>
+        <tr>
+            <th>Tipo</th>
+            <td>@Model.Tipo</td>
+        </tr>
+        <tr>
+            <th>Color</th>
+            <td>@Model.Color</td>
+        </tr>
+        <tr>
+            <th>Cantidad disponible</th>
+            <td>@Model.CantidadDisponible</td>
+        </tr>
+        <tr>
+            <th>Precio</th>
+            <td>Bs. @Model.PrecioUnitario</td>
+        </tr>
+    </table>
+</div>
 
 <p style="margin-top:1rem">¿Está seguro de que desea eliminar este material?</p>
 

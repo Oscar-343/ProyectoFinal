@@ -109,34 +109,36 @@
     }
     else
     {
-        <table class="tabla-pastel">
-            <thead>
-                <tr>
-                    <th>N.° Pedido</th>
-                    <th>Cliente</th>
-                    <th>Fecha pedido</th>
-                    <th>Fecha entrega</th>
-                    <th>Estado</th>
-                    <th>Horas</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var p in normales)
-                {
-                    string estadoClase = p.Estado.ToString().ToLowerInvariant();
+        <div class="tabla-responsive">
+            <table class="tabla-pastel">
+                <thead>
                     <tr>
-                        <td style="font-weight:600;">P@(p.IdPedido.ToString("D4"))</td>
-                        <td>@p.Cliente</td>
-                        <td>@p.FechaPedido.ToString("dd/MM/yyyy")</td>
-                        <td>@p.FechaEntrega.ToString("dd/MM/yyyy")</td>
-                        <td><span class="badge-estado-pedido estado-@estadoClase">@p.Estado</span></td>
-                        <td>@p.Horas</td>
-                        <td>@p.Total.ToString("C")</td>
+                        <th>N.° Pedido</th>
+                        <th>Cliente</th>
+                        <th>Fecha pedido</th>
+                        <th>Fecha entrega</th>
+                        <th>Estado</th>
+                        <th>Horas</th>
+                        <th>Total</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var p in normales)
+                    {
+                        string estadoClase = p.Estado.ToString().ToLowerInvariant();
+                        <tr>
+                            <td style="font-weight:600;">P@(p.IdPedido.ToString("D4"))</td>
+                            <td>@p.Cliente</td>
+                            <td>@p.FechaPedido.ToString("dd/MM/yyyy")</td>
+                            <td>@p.FechaEntrega.ToString("dd/MM/yyyy")</td>
+                            <td><span class="badge-estado-pedido estado-@estadoClase">@p.Estado</span></td>
+                            <td>@p.Horas</td>
+                            <td>@p.Total.ToString("C")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     }
 </div>
 
@@ -149,34 +151,36 @@
     }
     else
     {
-        <table class="tabla-pastel">
-            <thead>
-                <tr>
-                    <th>N.° Pedido</th>
-                    <th>Cliente</th>
-                    <th>Fecha pedido</th>
-                    <th>Fecha entrega</th>
-                    <th>Estado</th>
-                    <th>Horas</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var p in personalizados)
-                {
-                    string estadoClase = p.Estado.ToString().ToLowerInvariant();
+        <div class="tabla-responsive">
+            <table class="tabla-pastel">
+                <thead>
                     <tr>
-                        <td style="font-weight:600;">P@(p.IdPedido.ToString("D4"))</td>
-                        <td>@p.Cliente</td>
-                        <td>@p.FechaPedido.ToString("dd/MM/yyyy")</td>
-                        <td>@p.FechaEntrega.ToString("dd/MM/yyyy")</td>
-                        <td><span class="badge-estado-pedido estado-@estadoClase">@p.Estado</span></td>
-                        <td>@p.Horas</td>
-                        <td>@p.Total.ToString("C")</td>
+                        <th>N.° Pedido</th>
+                        <th>Cliente</th>
+                        <th>Fecha pedido</th>
+                        <th>Fecha entrega</th>
+                        <th>Estado</th>
+                        <th>Horas</th>
+                        <th>Total</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var p in personalizados)
+                    {
+                        string estadoClase = p.Estado.ToString().ToLowerInvariant();
+                        <tr>
+                            <td style="font-weight:600;">P@(p.IdPedido.ToString("D4"))</td>
+                            <td>@p.Cliente</td>
+                            <td>@p.FechaPedido.ToString("dd/MM/yyyy")</td>
+                            <td>@p.FechaEntrega.ToString("dd/MM/yyyy")</td>
+                            <td><span class="badge-estado-pedido estado-@estadoClase">@p.Estado</span></td>
+                            <td>@p.Horas</td>
+                            <td>@p.Total.ToString("C")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     }
 </div>
 

@@ -320,9 +320,38 @@ h1, h2, h3, .titulo {
     display: none;
     background: none;
     border: none;
-    font-size: 18px;
+    font-size: 20px;
     cursor: pointer;
     color: var(--texto-suave);
+}
+
+/* Barra que solo aparece en celular/tablet, arriba del contenido. */
+.mobile-topbar {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background-color: var(--blanco);
+    box-shadow: var(--sombra-suave);
+    position: sticky;
+    top: 0;
+    z-index: 90;
+}
+
+.mobile-topbar-brand {
+    font-family: 'Comfortaa', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--lila-deep);
+}
+
+/* Fondo oscuro detrás del menú cuando está abierto en celular. */
+.sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(91, 75, 99, .45);
+    z-index: 99;
 }
 
 .content-area {
@@ -348,9 +377,93 @@ h1, h2, h3, .titulo {
         display: block;
     }
 
+    .mobile-topbar {
+        display: flex;
+    }
+
     .content-area {
         padding: 18px;
     }
+
+    /* El backdrop solo se muestra cuando el menú está abierto en celular. */
+    .app-shell.sidebar-collapsed .sidebar-backdrop {
+        display: block;
+    }
+
+    /* El menú abierto debe quedar por encima del backdrop. */
+    .sidebar {
+        z-index: 101;
+    }
+}
+
+/* Layout de 2 columnas para Pedido/Create: catálogo elegido + formulario.
+   En celular pasa a 1 columna (el formulario queda debajo de la tabla). */
+.pedido-create-layout {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 24px;
+    align-items: start;
+    max-width: 950px;
+}
+
+@media (max-width: 800px) {
+    .pedido-create-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =========================================================
+   AJUSTES RÁPIDOS DE RESPONSIVE: tablas y formularios de 2 columnas
+   ========================================================= */
+
+/* Contenedor que envuelve cada <table class="tabla-pastel">.
+   La tabla mantiene su display normal (no se rompe el layout de
+   columnas); es el DIV el que se encarga de scrollear horizontalmente
+   cuando la tabla es más ancha que la pantalla. */
+.tabla-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+    .tabla-responsive .tabla-pastel {
+        width: max-content;
+        min-width: 100%;
+    }
+
+@media (max-width: 700px) {
+    /* Cualquier formulario armado con grid de 2 columnas en línea
+       (Pedido/Create, PedidoPersonalizado/Create) pasa a 1 columna. */
+    [style*="grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* El cuadro blanco de los formularios pierde padding para
+       aprovechar mejor el ancho disponible en celular. */
+    .form-box {
+        padding: 20px 18px;
+    }
+
+    /* Cada fila de "material + cantidad" (Modelo/Create,
+       PedidoPersonalizado/Create) pasa de una fila horizontal
+       apretada a bloques apilados verticalmente. */
+    .fila-material {
+        flex-wrap: wrap;
+    }
+
+        .fila-material select {
+            flex: 1 1 100%;
+        }
+
+        .fila-material input {
+            max-width: none;
+            flex: 1;
+        }
+
+        .fila-material .btn-secundario,
+        .fila-material .btn-quitar-material {
+            flex: 0 0 auto;
+        }
 }
 
 /* =========================================================

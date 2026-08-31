@@ -30,25 +30,27 @@
 
     @if (Model.MaterialesPorAcabarse.Any())
     {
-        <table class="tabla-pastel">
-            <thead>
-                <tr>
-                    <th>Material</th>
-                    <th>Disponible</th>
-                    <th>Stock mínimo</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var mat in Model.MaterialesPorAcabarse)
-                {
+        <div class="tabla-responsive">
+            <table class="tabla-pastel">
+                <thead>
                     <tr>
-                        <td>@mat.Nombre</td>
-                        <td style="color:#C2185B; font-weight:600;">@mat.CantidadDisponible @mat.UnidadMedida</td>
-                        <td>@mat.StockMinimo @mat.UnidadMedida</td>
+                        <th>Material</th>
+                        <th>Disponible</th>
+                        <th>Stock mínimo</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var mat in Model.MaterialesPorAcabarse)
+                    {
+                        <tr>
+                            <td>@mat.Nombre</td>
+                            <td style="color:#C2185B; font-weight:600;">@mat.CantidadDisponible @mat.UnidadMedida</td>
+                            <td>@mat.StockMinimo @mat.UnidadMedida</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     }
     else
     {

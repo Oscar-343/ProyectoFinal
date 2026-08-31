@@ -15,41 +15,43 @@
     </a>
 </div>
 
-<table class="tabla-pastel">
-    <thead>
-        <tr>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Dificultad</th>
-            <th>Tiempo (h)</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var m in Model)
-        {
+<div class="tabla-responsive">
+    <table class="tabla-pastel">
+        <thead>
             <tr>
-                <td style="font-weight:600;">@m.Nombre</td>
-                <td>@m.Descripcion</td>
-                <td><span class="badge-dificultad @m.Dificultad.ToLower()">@m.Dificultad</span></td>
-                <td>@m.TiempoProduccion</td>
-                <td>
-                    <div class="icon-actions">
-                        <a asp-action="Edit" asp-route-id="@m.IdModelo" class="icon-btn editar" title="Editar">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 20h9" />
-                                <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
-                            </svg>
-                        </a>
-                        <a asp-action="Delete" asp-route-id="@m.IdModelo" class="icon-btn eliminar" title="Eliminar">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="3 6 5 6 21 6" />
-                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                            </svg>
-                        </a>
-                    </div>
-                </td>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Dificultad</th>
+                <th>Tiempo (h)</th>
+                <th>Acciones</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var m in Model)
+            {
+                <tr>
+                    <td style="font-weight:600;">@m.Nombre</td>
+                    <td>@m.Descripcion</td>
+                    <td><span class="badge-dificultad @m.Dificultad.ToLower()">@m.Dificultad</span></td>
+                    <td>@m.TiempoProduccion</td>
+                    <td>
+                        <div class="icon-actions">
+                            <a asp-action="Edit" asp-route-id="@m.IdModelo" class="icon-btn editar" title="Editar">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 20h9" />
+                                    <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+                                </svg>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@m.IdModelo" class="icon-btn eliminar" title="Eliminar">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="3 6 5 6 21 6" />
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                </svg>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
