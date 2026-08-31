@@ -38,6 +38,6 @@ namespace ProyectoFinal.Models
         // Se calcula automáticamente en el controlador,
         // no lo llena el usuario en el formulario.
         [Column("estado")]
-        public string Estado { get; set; } = "stock disponible";
+        public string? Estado { get; set; } = "stock disponible";
     }
 }
