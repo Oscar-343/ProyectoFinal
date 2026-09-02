@@ -1,64 +1,72 @@
-﻿@model ProyectoFinal.ViewModels.PedidoEditViewModel
+@model ProyectoFinal.ViewModels.PedidoEditViewModel
 
 @{
     ViewData["Title"] = "Editar pedido";
 }
 
-<h2>Editar pedido #@Model.IdPedido</h2>
+<div class="page-header">
+    <h1 class="page-title">Editar pedido #@Model.IdPedido</h1>
+    <p class="page-eyebrow">Actualiza el estado y los modelos de este pedido</p>
+</div>
 
-<form asp-action="Edit" asp-route-id="@Model.IdPedido" method="post">
-    <input type="hidden" asp-for="IdPedido" />
+<div class="form-box form-box-ancho">
+    <form asp-action="Edit" asp-route-id="@Model.IdPedido" method="post" class="form-pastel">
+        <input type="hidden" asp-for="IdPedido" />
 
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div asp-validation-summary="ModelOnly" class="alerta-error"></div>
 
-    <div class="form-group mb-3">
-        <label asp-for="Cliente"></label>
-        <input asp-for="Cliente" class="form-control" />
-    </div>
+        <div class="mb-2">
+            <label asp-for="Cliente"></label>
+            <input asp-for="Cliente" />
+        </div>
 
-    <div class="form-group mb-3">
-        <label asp-for="FechaInicio"></label>
-        <input asp-for="FechaInicio" type="datetime-local" class="form-control" />
-    </div>
+        <div class="mb-2">
+            <label asp-for="FechaInicio"></label>
+            <input asp-for="FechaInicio" type="datetime-local" />
+        </div>
 
-    <div class="form-group mb-3">
-        <label asp-for="Estado"></label>
-        <select asp-for="Estado" class="form-control"
-                asp-items="Html.GetEnumSelectList<EstadoPedido>()"></select>
-    </div>
+        <div class="mb-3">
+            <label asp-for="Estado"></label>
+            <select asp-for="Estado" asp-items="Html.GetEnumSelectList<EstadoPedido>()"></select>
+        </div>
 
-    <h4>Modelos</h4>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Modelo</th>
-                <th>Tiempo (h)</th>
-                <th>Precio</th>
-                <th>Cantidad</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (int i = 0; i < Model.ModelosDisponibles.Count; i++)
-            {
-                <tr>
-                    <td>
-                        @Model.ModelosDisponibles[i].Nombre
-                        <input type="hidden" asp-for="ModelosDisponibles[i].IdModelo" />
-                        <input type="hidden" asp-for="ModelosDisponibles[i].Nombre" />
-                        <input type="hidden" asp-for="ModelosDisponibles[i].Imagen" />
-                        <input type="hidden" asp-for="ModelosDisponibles[i].TiempoProduccion" />
-                        <input type="hidden" asp-for="ModelosDisponibles[i].PrecioVenta" />
-                    </td>
-                    <td>@Model.ModelosDisponibles[i].TiempoProduccion</td>
-                    <td>@Model.ModelosDisponibles[i].PrecioVenta.ToString("Bs. ")</td>
-                    <td>
-                        <input asp-for="ModelosDisponibles[i].Cantidad" type="number" min="0" class="form-control" style="width: 80px" />
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+        <h4 class="detalle-seccion-titulo">Modelos</h4>
+        <div class="tabla-responsive mb-3">
+            <table class="tabla-pastel">
+                <thead>
+                    <tr>
+                        <th>Modelo</th>
+                        <th>Tiempo (h)</th>
+                        <th>Precio</th>
+                        <th>Cantidad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.ModelosDisponibles.Count; i++)
+                    {
+                        <tr>
+                            <td>
+                                @Model.ModelosDisponibles[i].Nombre
+                                <input type="hidden" asp-for="ModelosDisponibles[i].IdModelo" />
+                                <input type="hidden" asp-for="ModelosDisponibles[i].Nombre" />
+                                <input type="hidden" asp-for="ModelosDisponibles[i].Imagen" />
+                                <input type="hidden" asp-for="ModelosDisponibles[i].TiempoProduccion" />
+                                <input type="hidden" asp-for="ModelosDisponibles[i].PrecioVenta" />
+                            </td>
+                            <td>@Model.ModelosDisponibles[i].TiempoProduccion</td>
+                            <td>@Model.ModelosDisponibles[i].PrecioVenta.ToString("Bs. ")</td>
+                            <td>
+                                <input asp-for="ModelosDisponibles[i].Cantidad" type="number" min="0" style="width:80px" />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
 
-    <button type="submit" class="btn btn-primary">Guardar cambios</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
-</form>
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn-pastel">Guardar cambios</button>
+            <a asp-action="Index" class="btn-secundario">Cancelar</a>
+        </div>
+    </form>
+</div>

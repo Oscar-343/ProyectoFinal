@@ -1,63 +1,76 @@
-﻿@model Pedido
+@model Pedido
 
 @{
     ViewData["Title"] = "Detalle del pedido";
     string estadoClase = Model.Estado.ToString().ToLowerInvariant();
 }
 
-<div class="content-header">
-    <h2>Pedido #@Model.IdPedido</h2>
-    <div>
-        <a class="btn btn-secondary" asp-action="Edit" asp-route-id="@Model.IdPedido">Editar</a>
-        <a class="btn btn-secondary" asp-action="Index">Volver</a>
+<div class="detalle-header">
+    <h1>Pedido #@Model.IdPedido</h1>
+    <div class="detalle-acciones">
+        <a class="btn-pastel" asp-action="Edit" asp-route-id="@Model.IdPedido">✏️ Editar</a>
+        <a class="btn-secundario" asp-action="Index">← Volver</a>
     </div>
 </div>
 
-<dl class="row">
-    <dt class="col-sm-3">Cliente</dt>
-    <dd class="col-sm-9">@Model.Cliente</dd>
+<div class="detalle-box">
+    <div class="detalle-grid">
+        <div class="detalle-item">
+            <span class="etiqueta">Cliente</span>
+            <span class="valor">@Model.Cliente</span>
+        </div>
+        <div class="detalle-item">
+            <span class="etiqueta">Estado</span>
+            <span class="valor"><span class="badge-estado-pedido estado-@estadoClase">@Model.Estado</span></span>
+        </div>
+        <div class="detalle-item">
+            <span class="etiqueta">Fecha de pedido</span>
+            <span class="valor">@Model.FechaPedido.ToString("dd/MM/yyyy HH:mm")</span>
+        </div>
+        <div class="detalle-item">
+            <span class="etiqueta">Fecha de inicio</span>
+            <span class="valor">@Model.FechaInicio.ToString("dd/MM/yyyy HH:mm")</span>
+        </div>
+        <div class="detalle-item">
+            <span class="etiqueta">Fecha de entrega</span>
+            <span class="valor">@Model.FechaEntrega.ToString("dddd dd/MM/yyyy HH:mm")</span>
+        </div>
+        <div class="detalle-item">
+            <span class="etiqueta">Horas de producción</span>
+            <span class="valor">@Model.HorasProduccionTotal horas</span>
+        </div>
+    </div>
+</div>
 
-    <dt class="col-sm-3">Estado</dt>
-    <dd class="col-sm-9"><span class="badge estado-@estadoClase">@Model.Estado</span></dd>
-
-    <dt class="col-sm-3">Fecha de pedido</dt>
-    <dd class="col-sm-9">@Model.FechaPedido.ToString("dd/MM/yyyy HH:mm")</dd>
-
-    <dt class="col-sm-3">Fecha de inicio</dt>
-    <dd class="col-sm-9">@Model.FechaInicio.ToString("dd/MM/yyyy HH:mm")</dd>
-
-    <dt class="col-sm-3">Fecha de entrega</dt>
-    <dd class="col-sm-9">@Model.FechaEntrega.ToString("dddd dd/MM/yyyy HH:mm")</dd>
-
-    <dt class="col-sm-3">Horas de producción</dt>
-    <dd class="col-sm-9">@Model.HorasProduccionTotal horas</dd>
-</dl>
-
-<h4>Modelos pedidos</h4>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Modelo</th>
-            <th>Cantidad</th>
-            <th>Precio unitario</th>
-            <th>Subtotal</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var detalle in Model.Detalles)
-        {
-            <tr>
-                <td>@detalle.Modelo.Nombre</td>
-                <td>@detalle.Cantidad</td>
-                <td>@detalle.Modelo.PrecioVenta.ToString("Bs. ")</td>
-                <td>@((detalle.Modelo.PrecioVenta * detalle.Cantidad).ToString("Bs. "))</td>
-            </tr>
-        }
-    </tbody>
-    <tfoot>
-        <tr>
-            <th colspan="3">Total</th>
-            <th>@Model.PrecioVentaTotal.ToString("Bs. ")</th>
-        </tr>
-    </tfoot>
-</table>
+<div class="detalle-box">
+    <h4 class="detalle-seccion-titulo">Modelos pedidos</h4>
+    <div class="tabla-responsive">
+        <table class="tabla-pastel">
+            <thead>
+                <tr>
+                    <th>Modelo</th>
+                    <th>Cantidad</th>
+                    <th>Precio unitario</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var detalle in Model.Detalles)
+                {
+                    <tr>
+                        <td>@detalle.Modelo.Nombre</td>
+                        <td>@detalle.Cantidad</td>
+                        <td>@detalle.Modelo.PrecioVenta.ToString("Bs. ")</td>
+                        <td>@((detalle.Modelo.PrecioVenta * detalle.Cantidad).ToString("Bs. "))</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="3" style="text-align:right">Total</th>
+                    <th>@Model.PrecioVentaTotal.ToString("Bs. ")</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>

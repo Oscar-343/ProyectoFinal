@@ -1,63 +1,67 @@
 ﻿@model ProyectoFinal.Models.material
 
-<h2 class="titulo">Detalle del material</h2>
-<p style="color:#777;font-size:14px">Aquí puede consultar toda la información registrada del material.</p>
-
-<div class="tabla-responsive">
-    <table class="tabla-pastel" style="max-width:420px">
-        <tr>
-            <th>ID</th>
-            <td>@Model.IdMaterial</td>
-        </tr>
-        <tr>
-            <th>Nombre</th>
-            <td>@Model.Nombre</td>
-        </tr>
-        <tr>
-            <th>Tipo</th>
-            <td>@Model.Tipo</td>
-        </tr>
-        <tr>
-            <th>Color</th>
-            <td>@Model.Color</td>
-        </tr>
-        <tr>
-            <th>Unidad de medida</th>
-            <td>@Model.UnidadMedida</td>
-        </tr>
-        <tr>
-            <th>Cantidad disponible</th>
-            <td>@Model.CantidadDisponible</td>
-        </tr>
-        <tr>
-            <th>Precio por unidad</th>
-            <td>Bs. @Model.PrecioUnitario</td>
-        </tr>
-        <tr>
-            <th>Stock mínimo</th>
-            <td>@Model.StockMinimo</td>
-        </tr>
-        <tr>
-            <th>Estado</th>
-            <td>
-                @if (Model.Estado == "stock agotado")
-                {
-                    <span class="badge-estado agotado">Sin stock</span>
-                }
-                else if (Model.Estado == "stock bajo")
-                {
-                    <span class="badge-estado bajo">Stock bajo</span>
-                }
-                else
-                {
-                    <span class="badge-estado disponible">Disponible</span>
-                }
-            </td>
-        </tr>
-    </table>
+<div class="page-header">
+    <h1 class="page-title">Detalle del material</h1>
+    <p class="page-eyebrow">Aquí puede consultar toda la información registrada del material</p>
 </div>
 
-<div style="margin-top:1rem">
-    <a asp-action="Edit" asp-route-id="@Model.IdMaterial" class="btn-pastel">Editar</a>
-    <a asp-action="Index" class="btn-secundario">Volver</a>
+<div class="detalle-box" style="max-width:520px;margin:0 auto">
+    <div class="tabla-responsive">
+        <table class="tabla-pastel">
+            <tr>
+                <th>ID</th>
+                <td>@Model.IdMaterial</td>
+            </tr>
+            <tr>
+                <th>Nombre</th>
+                <td>@Model.Nombre</td>
+            </tr>
+            <tr>
+                <th>Tipo</th>
+                <td>@Model.Tipo</td>
+            </tr>
+            <tr>
+                <th>Color</th>
+                <td>@Model.Color</td>
+            </tr>
+            <tr>
+                <th>Unidad de medida</th>
+                <td>@Model.UnidadMedida</td>
+            </tr>
+            <tr>
+                <th>Cantidad disponible</th>
+                <td>@Model.CantidadDisponible</td>
+            </tr>
+            <tr>
+                <th>Precio por unidad</th>
+                <td>Bs. @Model.PrecioUnitario</td>
+            </tr>
+            <tr>
+                <th>Stock mínimo</th>
+                <td>@Model.StockMinimo</td>
+            </tr>
+            <tr>
+                <th>Estado</th>
+                <td>
+                    @if (Model.Estado == "stock agotado")
+                    {
+                        <span class="badge-estado agotado">Sin stock</span>
+                    }
+                    else if (Model.Estado == "stock bajo")
+                    {
+                        <span class="badge-estado bajo">Stock bajo</span>
+                    }
+                    else
+                    {
+                        <span class="badge-estado disponible">Disponible</span>
+                    }
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div style="margin-top:1rem">
+        <a asp-action="Edit" asp-route-id="@Model.IdMaterial" class="btn-pastel">✏️ Editar</a>
+        <a asp-action="Index" class="btn-secundario">← Volver</a>
+    </div>
 </div>

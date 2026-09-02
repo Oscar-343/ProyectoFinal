@@ -1,101 +1,108 @@
-﻿@model PedidoPersonalizadoEditViewModel
+@model PedidoPersonalizadoEditViewModel
 @using System.Text.Json
 
 @{
     ViewData["Title"] = "Editar pedido personalizado";
 }
 
-<h2>Editar pedido personalizado</h2>
+<div class="page-header">
+    <h1 class="page-title">Editar pedido personalizado</h1>
+    <p class="page-eyebrow">Actualiza los datos de este pedido</p>
+</div>
 
-<form asp-action="Edit" asp-route-id="@Model.IdPedidoPersonalizado" method="post" enctype="multipart/form-data">
-    <input type="hidden" asp-for="IdPedidoPersonalizado" />
-    <input type="hidden" asp-for="ImagenActual" />
+<div class="form-box form-box-ancho">
+    <form asp-action="Edit" asp-route-id="@Model.IdPedidoPersonalizado" method="post" enctype="multipart/form-data" class="form-pastel">
+        <input type="hidden" asp-for="IdPedidoPersonalizado" />
+        <input type="hidden" asp-for="ImagenActual" />
 
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div asp-validation-summary="ModelOnly" class="alerta-error"></div>
 
-    @if (!string.IsNullOrEmpty(Model.ImagenActual))
-    {
-        <div class="mb-3">
-            <label>Imagen actual</label><br />
-            <img src="@Model.ImagenActual" style="max-width: 200px; border-radius: 8px;" />
+        @if (!string.IsNullOrEmpty(Model.ImagenActual))
+        {
+            <div class="mb-3">
+                <label>Imagen actual</label>
+                <img src="@Model.ImagenActual" class="detalle-imagen" />
+            </div>
+        }
+
+        <div class="mb-2">
+            <label>Nueva imagen (opcional, reemplaza a la actual)</label>
+            <input asp-for="ImagenArchivo" type="file" accept=".jpg,.jpeg,.png,.webp" />
         </div>
-    }
 
-    <div class="form-group mb-3">
-        <label>Nueva imagen (opcional, reemplaza a la actual)</label>
-        <input asp-for="ImagenArchivo" type="file" class="form-control" accept=".jpg,.jpeg,.png,.webp" />
-    </div>
+        <div class="mb-2">
+            <label asp-for="Cliente"></label>
+            <input asp-for="Cliente" />
+        </div>
 
-    <div class="form-group mb-3">
-        <label asp-for="Cliente"></label>
-        <input asp-for="Cliente" class="form-control" />
-    </div>
+        <div class="mb-2">
+            <label asp-for="NombreReferencia"></label>
+            <input asp-for="NombreReferencia" />
+        </div>
 
-    <div class="form-group mb-3">
-        <label asp-for="NombreReferencia"></label>
-        <input asp-for="NombreReferencia" class="form-control" />
-    </div>
+        <div class="mb-2">
+            <label asp-for="Descripcion"></label>
+            <textarea asp-for="Descripcion"></textarea>
+        </div>
 
-    <div class="form-group mb-3">
-        <label asp-for="Descripcion"></label>
-        <textarea asp-for="Descripcion" class="form-control"></textarea>
-    </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px" class="mb-2">
+            <div>
+                <label asp-for="Dificultad"></label>
+                <select asp-for="Dificultad">
+                    <option value="Baja">Baja</option>
+                    <option value="Media">Media</option>
+                    <option value="Alta">Alta</option>
+                </select>
+            </div>
+            <div>
+                <label asp-for="TiempoProduccion"></label>
+                <input asp-for="TiempoProduccion" type="number" step="0.5" />
+            </div>
+        </div>
 
-    <div class="form-group mb-3">
-        <label asp-for="Dificultad"></label>
-        <select asp-for="Dificultad" class="form-control">
-            <option value="Baja">Baja</option>
-            <option value="Media">Media</option>
-            <option value="Alta">Alta</option>
-        </select>
-    </div>
+        <div class="mb-2">
+            <label asp-for="FechaInicio"></label>
+            <input asp-for="FechaInicio" type="datetime-local" />
+        </div>
 
-    <div class="form-group mb-3">
-        <label asp-for="TiempoProduccion"></label>
-        <input asp-for="TiempoProduccion" type="number" step="0.5" class="form-control" />
-    </div>
+        <div class="mb-3">
+            <label asp-for="Estado"></label>
+            <select asp-for="Estado" asp-items="Html.GetEnumSelectList<EstadoPedido>()"></select>
+        </div>
 
-    <div class="form-group mb-3">
-        <label asp-for="FechaInicio"></label>
-        <input asp-for="FechaInicio" type="datetime-local" class="form-control" />
-    </div>
+        <!-- Materiales: mismo patrón de dropdown + cantidad + quitar que usa Modelo/Create -->
+        <div class="mb-3">
+            <label>Materiales usados</label>
 
-    <div class="form-group mb-3">
-        <label asp-for="Estado"></label>
-        <select asp-for="Estado" class="form-control"
-                asp-items="Html.GetEnumSelectList<EstadoPedido>()"></select>
-    </div>
+            <div id="filas-materiales"></div>
 
-    <!-- Materiales: mismo patrón de dropdown + cantidad + quitar que usa Modelo/Create -->
-    <div class="mb-3">
-        <label>Materiales usados</label>
+            <button type="button" id="btn-agregar-material" class="btn-secundario" style="margin-top:6px">
+                + Agregar material
+            </button>
 
-        <div id="filas-materiales"></div>
+            <small style="display:block;margin-top:6px">
+                El costo y el precio de venta se recalculan automáticamente al guardar,
+                según los materiales elegidos, el tiempo de producción y la dificultad.
+            </small>
+        </div>
 
-        <button type="button" id="btn-agregar-material" class="btn-secundario" style="margin-top:6px">
-            + Agregar material
-        </button>
-
-        <p style="color:#777; font-size:13px; margin-top:6px">
-            El costo y el precio de venta se recalculan automáticamente al guardar,
-            según los materiales elegidos, el tiempo de producción y la dificultad.
-        </p>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Guardar cambios</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
-</form>
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn-pastel">Guardar cambios</button>
+            <a asp-action="Index" class="btn-secundario">Cancelar</a>
+        </div>
+    </form>
+</div>
 
 <!-- Plantilla: el "molde" de una fila de material. Se clona con JS. -->
 <template id="plantilla-fila-material">
-    <div class="d-flex gap-2 mb-1 fila-material" style="display:flex;gap:8px;margin-bottom:6px">
-        <select name="materialesSeleccionados" class="form-control">
+    <div class="fila-material">
+        <select name="materialesSeleccionados">
             @foreach (var mat in (List<ProyectoFinal.Models.material>)ViewBag.Materiales)
             {
-                <option value="@mat.IdMaterial">@mat.Nombre (@mat.Color) - Bs. @mat.PrecioUnitario / @mat.UnidadMedida</option>
+                <option value="@mat.IdMaterial">@mat.Nombre - @mat.Color (Bs. @mat.PrecioUnitario / @mat.UnidadMedida)</option>
             }
         </select>
-        <input type="number" name="cantidades" step="0.01" min="0.01" placeholder="Cantidad" class="form-control" style="max-width:120px" required />
+        <input type="number" name="cantidades" step="0.01" min="0.01" placeholder="Cantidad" required />
         <button type="button" class="btn-secundario btn-quitar-material">Quitar</button>
     </div>
 </template>

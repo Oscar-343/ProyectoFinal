@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProyectoFinal.Data;
 using ProyectoFinal.Dto;
+using ProyectoFinal.Models;
 
 namespace ProyectoFinal.Service
 {
@@ -16,18 +17,25 @@ namespace ProyectoFinal.Service
         public async Task<ReporteDto> GenerarReporteAsync(DateTime desde, DateTime hasta)
         {
             // === 1. Pedidos normales del rango ===
+            // IMPORTANTE: solo se cuentan los pedidos Entregados. Un pedido Pendiente,
+            // En Producción o Cancelado todavía no representa dinero ganado de verdad
+            // (ingreso reconocido); contarlos aquí inflaba los ingresos, el costo, las
+            // horas trabajadas y el ranking de modelos con ventas que ni siquiera se
+            // concretaron.
             var pedidosEnRango = await _context.Pedido
                 .Include(p => p.Detalles)
                     .ThenInclude(d => d.Modelo)
                         .ThenInclude(m => m.ModeloMateriales)
                             .ThenInclude(mm => mm.Material)
-                .Where(p => p.FechaPedido >= desde && p.FechaPedido < hasta.AddDays(1))
+                .Where(p => p.FechaPedido >= desde && p.FechaPedido < hasta.AddDays(1)
+                         && p.Estado == EstadoPedido.Entregado)
                 .ToListAsync();
 
             var personalizadosEnRango = await _context.PedidoPersonalizado
                 .Include(pp => pp.Materiales)
                     .ThenInclude(m => m.Material)
-                .Where(pp => pp.FechaPedido >= desde && pp.FechaPedido < hasta.AddDays(1))
+                .Where(pp => pp.FechaPedido >= desde && pp.FechaPedido < hasta.AddDays(1)
+                          && pp.Estado == EstadoPedido.Entregado)
                 .ToListAsync();
 
             var detalles = pedidosEnRango.SelectMany(p => p.Detalles).ToList();
@@ -92,11 +100,13 @@ namespace ProyectoFinal.Service
 
             var pedidosAnterior = await _context.Pedido
                 .Include(p => p.Detalles)
-                .Where(p => p.FechaPedido >= desdeAnterior && p.FechaPedido <= hastaAnterior)
+                .Where(p => p.FechaPedido >= desdeAnterior && p.FechaPedido <= hastaAnterior
+                         && p.Estado == EstadoPedido.Entregado)
                 .ToListAsync();
 
             var personalizadosAnterior = await _context.PedidoPersonalizado
-                .Where(pp => pp.FechaPedido >= desdeAnterior && pp.FechaPedido <= hastaAnterior)
+                .Where(pp => pp.FechaPedido >= desdeAnterior && pp.FechaPedido <= hastaAnterior
+                          && pp.Estado == EstadoPedido.Entregado)
                 .ToListAsync();
 
             var utilidadAnterior = pedidosAnterior.Sum(p => p.PrecioVentaTotal)

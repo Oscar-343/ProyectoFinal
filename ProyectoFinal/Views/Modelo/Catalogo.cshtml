@@ -76,7 +76,7 @@
     </div>
 
     <!-- ===== CARRITO LATERAL ===== -->
-    <aside class="catalogo-carrito" id="barra-carrito" style="display:none;">
+    <aside class="catalogo-carrito carrito-oculto" id="barra-carrito">
         <div class="carrito-header">
             <span class="carrito-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -93,7 +93,7 @@
 
         <span class="carrito-error" id="error-carrito"></span>
 
-        <button type="button" onclick="enviarCarrito()" class="btn-pastel carrito-btn">
+        <button type="button" onclick="enviarCarrito()" class="btn-pastel carrito-btn" id="btn-registrar-pedido">
             Registrar pedido
         </button>
     </aside>
@@ -159,12 +159,16 @@
 
         badge.textContent = totalItemsCarrito();
 
+        // Se oculta/muestra con una clase (display:none). Ya no rompe el
+        // "sticky" al reaparecer porque esa causa real (overflow-x:hidden
+        // puesto en <body>) ya está corregida.
         if (ids.length === 0) {
-            barra.style.display = 'none';
+            barra.classList.add('carrito-oculto');
+            resumen.innerHTML = '';
             return;
         }
 
-        barra.style.display = 'flex';
+        barra.classList.remove('carrito-oculto');
 
         resumen.innerHTML = ids.map(id => `
                 <div class="carrito-item">

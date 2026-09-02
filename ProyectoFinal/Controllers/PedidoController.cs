@@ -15,27 +15,40 @@ namespace ProyectoFinal.Controllers
     {
         private readonly TiendaDbContext _context;
         private readonly IColaProduccionService _colaProduccion;
+        private readonly IInventarioService _inventario;
 
         public const string SESSION_KEY_SELECCION = "SeleccionModelos";
 
         public PedidoController(
             TiendaDbContext context,
-            IColaProduccionService colaProduccion)
+            IColaProduccionService colaProduccion,
+            IInventarioService inventario)
         {
             _context = context;
             _colaProduccion = colaProduccion;
+            _inventario = inventario;
         }
 
         // Muestra los pedidos (normales + personalizados) y permite filtrarlos por estado.
         public async Task<IActionResult> Index(EstadoPedido? estado = null)
         {
+            // El filtro "Pendiente" del sidebar (Pedidos pendientes) debe incluir también
+            // los pedidos que ya están "EnProduccion": para el negocio, un pedido sigue
+            // siendo "pendiente" mientras no se haya entregado ni cancelado.
+            // (Se usan comparaciones == encadenadas con || en vez de Contains() sobre un
+            // array, porque Contains() sobre una lista de C# a veces no se puede traducir
+            // a SQL y tira error en tiempo de ejecución.)
+            bool esFiltroPendientes = estado == EstadoPedido.Pendiente;
+
             // 1. Trae los pedidos normales
             var queryNormales = _context.Pedido
                 .Include(p => p.Detalles)
                     .ThenInclude(d => d.Modelo)
                 .AsQueryable();
 
-            if (estado.HasValue)
+            if (esFiltroPendientes)
+                queryNormales = queryNormales.Where(p => p.Estado == EstadoPedido.Pendiente || p.Estado == EstadoPedido.EnProduccion);
+            else if (estado.HasValue)
                 queryNormales = queryNormales.Where(p => p.Estado == estado.Value);
 
             var normales = await queryNormales.ToListAsync();
@@ -43,7 +56,9 @@ namespace ProyectoFinal.Controllers
             // 2. Trae los pedidos personalizados
             var queryPersonalizados = _context.PedidoPersonalizado.AsQueryable();
 
-            if (estado.HasValue)
+            if (esFiltroPendientes)
+                queryPersonalizados = queryPersonalizados.Where(p => p.Estado == EstadoPedido.Pendiente || p.Estado == EstadoPedido.EnProduccion);
+            else if (estado.HasValue)
                 queryPersonalizados = queryPersonalizados.Where(p => p.Estado == estado.Value);
 
             var personalizados = await queryPersonalizados.ToListAsync();
@@ -83,7 +98,9 @@ namespace ProyectoFinal.Controllers
 
             if (estado.HasValue)
             {
-                ViewBag.TituloLista = $"Pedidos - {estado.Value}";
+                ViewBag.TituloLista = estado == EstadoPedido.Pendiente
+                    ? "Pedidos pendientes"
+                    : $"Pedidos - {estado.Value}";
                 ViewBag.MostrarTiempoRestante = true;
             }
             else
@@ -359,6 +376,12 @@ namespace ProyectoFinal.Controllers
                     vm.FechaInicio,
                     horasTotales);
 
+            // Guarda el estado anterior ANTES de sobreescribirlo. El stock se descuenta
+            // al entrar en producción (ahí es cuando realmente se consume el material),
+            // no al entregar. También cubre el caso de que un pedido salte directo de
+            // Pendiente a Entregado sin pasar por EnProduccion.
+            var estadoAnterior = pedido.Estado;
+
             pedido.Cliente = vm.Cliente;
             pedido.FechaInicio = fechaInicioReal;
             pedido.FechaEntrega = fechaEntrega;
@@ -366,6 +389,14 @@ namespace ProyectoFinal.Controllers
             pedido.Detalles = nuevosDetalles;
 
             await _context.SaveChangesAsync();
+
+            bool entroAProduccion = estadoAnterior != EstadoPedido.EnProduccion && vm.Estado == EstadoPedido.EnProduccion;
+            bool saltoDirectoAEntregado = estadoAnterior == EstadoPedido.Pendiente && vm.Estado == EstadoPedido.Entregado;
+
+            if (entroAProduccion || saltoDirectoAEntregado)
+            {
+                await _inventario.DescontarStockPedidoNormalAsync(pedido.IdPedido);
+            }
 
             TempData["Mensaje"] =
                 $"Pedido actualizado. Nueva fecha de entrega: " +

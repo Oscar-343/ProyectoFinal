@@ -1,26 +1,39 @@
-﻿@model ProyectoFinal.Models.PedidoPersonalizado
+@model ProyectoFinal.Models.PedidoPersonalizado
 
-<link rel="stylesheet" href="~/css/amigurumis.css" />
+@{
+    ViewData["Title"] = "Eliminar pedido personalizado";
+}
 
-<h2 class="titulo">Eliminar pedido personalizado</h2>
+<div class="page-header">
+    <h1 class="page-title">Eliminar pedido personalizado</h1>
+    <p class="page-eyebrow">Esta acción no se puede deshacer</p>
+</div>
 
-<div style="max-width:500px">
+<div class="detalle-box" style="max-width:520px;margin:0 auto">
     @if (!string.IsNullOrEmpty(Model.Imagen))
     {
-        <img src="@Model.Imagen" style="width:100%;max-height:250px;object-fit:cover;border-radius:8px;margin-bottom:12px" />
+        <img src="@Model.Imagen" class="detalle-imagen" />
     }
 
-    <p style="font-size:14px">
-        ¿Seguro que deseas eliminar el pedido de <strong>@Model.Cliente</strong> (@Model.NombreReferencia)?
-    </p>
-    <p style="font-size:12px;color:#888">Precio: Bs @Model.PrecioVenta — Entrega: @Model.FechaEntrega.ToString("dd/MM/yyyy HH:mm")</p>
+    <div class="caja-peligro">
+        ⚠️ ¿Seguro que deseas eliminar el pedido de <strong>@Model.Cliente</strong> (@Model.NombreReferencia)?
+    </div>
 
-    <form asp-action="Delete" asp-controller="PedidoPersonalizado" method="post" style="margin-top:16px">
+    <div class="detalle-grid">
+        <div class="detalle-item">
+            <span class="etiqueta">Precio</span>
+            <span class="valor">Bs @Model.PrecioVenta</span>
+        </div>
+        <div class="detalle-item">
+            <span class="etiqueta">Entrega</span>
+            <span class="valor">@Model.FechaEntrega.ToString("dd/MM/yyyy HH:mm")</span>
+        </div>
+    </div>
+
+    <form asp-action="Delete" asp-controller="PedidoPersonalizado" method="post" style="margin-top:18px">
         @Html.AntiForgeryToken()
         <input type="hidden" name="id" value="@Model.IdPedidoPersonalizado" />
-        <button type="submit" style="background:#c0392b;color:#fff;padding:8px 16px;border:none;border-radius:4px;cursor:pointer;font-size:13px">
-            Eliminar
-        </button>
-        <a asp-action="Index" asp-controller="PedidoPersonalizado" style="margin-left:10px;font-size:13px">Cancelar</a>
+        <button type="submit" class="btn-peligro">Sí, eliminar</button>
+        <a asp-action="Index" asp-controller="PedidoPersonalizado" class="btn-secundario">Cancelar</a>
     </form>
 </div>

@@ -1,33 +1,41 @@
-﻿@model Pedido
+@model Pedido
 
 @{
     ViewData["Title"] = "Eliminar pedido";
 }
 
-<h2>¿Eliminar este pedido?</h2>
-
-<div class="alert alert-warning">
-    Esta acción no se puede deshacer.
+<div class="page-header">
+    <h1 class="page-title">Eliminar pedido</h1>
+    <p class="page-eyebrow">Esta acción no se puede deshacer</p>
 </div>
 
-<dl class="row">
-    <dt class="col-sm-3">Cliente</dt>
-    <dd class="col-sm-9">@Model.Cliente</dd>
+<div class="detalle-box" style="max-width:560px;margin:0 auto">
+    <div class="caja-peligro">
+        ⚠️ ¿Seguro que deseas eliminar este pedido? Esta acción no se puede deshacer.
+    </div>
 
-    <dt class="col-sm-3">Estado</dt>
-    <dd class="col-sm-9">@Model.Estado</dd>
+    <div class="detalle-grid">
+        <div class="detalle-item">
+            <span class="etiqueta">Cliente</span>
+            <span class="valor">@Model.Cliente</span>
+        </div>
+        <div class="detalle-item">
+            <span class="etiqueta">Estado</span>
+            <span class="valor">@Model.Estado</span>
+        </div>
+        <div class="detalle-item">
+            <span class="etiqueta">Fecha de entrega</span>
+            <span class="valor">@Model.FechaEntrega.ToString("dd/MM/yyyy HH:mm")</span>
+        </div>
+        <div class="detalle-item">
+            <span class="etiqueta">Modelos</span>
+            <span class="valor">@string.Join(", ", Model.Detalles.Select(d => $"{d.Modelo.Nombre} x{d.Cantidad}"))</span>
+        </div>
+    </div>
 
-    <dt class="col-sm-3">Fecha de entrega</dt>
-    <dd class="col-sm-9">@Model.FechaEntrega.ToString("dd/MM/yyyy HH:mm")</dd>
-
-    <dt class="col-sm-3">Modelos</dt>
-    <dd class="col-sm-9">
-        @string.Join(", ", Model.Detalles.Select(d => $"{d.Modelo.Nombre} x{d.Cantidad}"))
-    </dd>
-</dl>
-
-<form asp-action="Delete" asp-route-id="@Model.IdPedido" method="post">
-    <input type="hidden" asp-for="IdPedido" />
-    <button type="submit" class="btn btn-danger">Sí, eliminar</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
-</form>
+    <form asp-action="Delete" asp-route-id="@Model.IdPedido" method="post" style="margin-top:18px">
+        <input type="hidden" asp-for="IdPedido" />
+        <button type="submit" class="btn-peligro">Sí, eliminar</button>
+        <a asp-action="Index" class="btn-secundario">Cancelar</a>
+    </form>
+</div>

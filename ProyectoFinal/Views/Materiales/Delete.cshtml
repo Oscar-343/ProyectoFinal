@@ -1,41 +1,43 @@
 ﻿@model ProyectoFinal.Models.material
 
-<h2 class="titulo">Eliminar material</h2>
-<p style="color:#777;font-size:14px">Está a punto de eliminar el siguiente material:</p>
-
-<div class="alerta-pastel">
-    <strong>Advertencia:</strong> esta acción eliminará el material de la base de datos.
+<div class="page-header">
+    <h1 class="page-title">Eliminar material</h1>
+    <p class="page-eyebrow">Está a punto de eliminar el siguiente material</p>
 </div>
 
-<div class="tabla-responsive">
-    <table class="tabla-pastel" style="max-width:420px">
-        <tr>
-            <th>Nombre</th>
-            <td>@Model.Nombre</td>
-        </tr>
-        <tr>
-            <th>Tipo</th>
-            <td>@Model.Tipo</td>
-        </tr>
-        <tr>
-            <th>Color</th>
-            <td>@Model.Color</td>
-        </tr>
-        <tr>
-            <th>Cantidad disponible</th>
-            <td>@Model.CantidadDisponible</td>
-        </tr>
-        <tr>
-            <th>Precio</th>
-            <td>Bs. @Model.PrecioUnitario</td>
-        </tr>
-    </table>
+<div class="detalle-box" style="max-width:480px;margin:0 auto">
+    <div class="caja-peligro">
+        ⚠️ <strong>Advertencia:</strong> esta acción eliminará el material de la base de datos.
+    </div>
+
+    <div class="tabla-responsive">
+        <table class="tabla-pastel">
+            <tr>
+                <th>Nombre</th>
+                <td>@Model.Nombre</td>
+            </tr>
+            <tr>
+                <th>Tipo</th>
+                <td>@Model.Tipo</td>
+            </tr>
+            <tr>
+                <th>Color</th>
+                <td>@Model.Color</td>
+            </tr>
+            <tr>
+                <th>Cantidad disponible</th>
+                <td>@Model.CantidadDisponible</td>
+            </tr>
+            <tr>
+                <th>Precio</th>
+                <td>Bs. @Model.PrecioUnitario</td>
+            </tr>
+        </table>
+    </div>
+
+    <form asp-action="DeleteConfirmed" style="margin-top:1rem">
+        <input type="hidden" name="id" value="@Model.IdMaterial" />
+        <button type="submit" class="btn-peligro">Sí, eliminar</button>
+        <a asp-action="Index" class="btn-secundario">Cancelar</a>
+    </form>
 </div>
-
-<p style="margin-top:1rem">¿Está seguro de que desea eliminar este material?</p>
-
-<form asp-action="DeleteConfirmed">
-    <input type="hidden" name="id" value="@Model.IdMaterial" />
-    <button type="submit" class="btn-peligro">Sí, eliminar</button>
-    <a asp-action="Index" class="btn-secundario">Cancelar</a>
-</form>

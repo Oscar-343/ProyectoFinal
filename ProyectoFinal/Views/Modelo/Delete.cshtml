@@ -1,20 +1,24 @@
 ﻿@model ProyectoFinal.Models.Modelo
 
-<link rel="stylesheet" href="~/css/amigurumis.css" />
-
-<h2 class="titulo">Eliminar modelo</h2>
-<p>¿Seguro que quieres eliminar este modelo?</p>
-
-<div class="card-modelo" style="max-width:260px">
-    <img src="@Model.Imagen" />
-    <div class="cuerpo">
-        <strong>@Model.Nombre</strong>
-        <p>@Model.Descripcion</p>
-    </div>
+<div class="page-header">
+    <h1 class="page-title">Eliminar modelo</h1>
+    <p class="page-eyebrow">Esta acción no se puede deshacer</p>
 </div>
 
-<form asp-action="Delete" method="post" class="mt-3">
-    <input type="hidden" asp-for="IdModelo" />
-    <button type="submit" class="btn-pastel">Eliminar</button>
-    <a asp-action="Index">Cancelar</a>
-</form>
+<div class="detalle-box" style="max-width:340px;margin:0 auto">
+    <div class="caja-peligro">⚠️ ¿Seguro que quieres eliminar este modelo?</div>
+
+    <div class="card-modelo">
+        <img src="@Model.Imagen" />
+        <div class="cuerpo">
+            <strong>@Model.Nombre</strong>
+            <p>@Model.Descripcion</p>
+        </div>
+    </div>
+
+    <form asp-action="Delete" method="post" style="margin-top:16px">
+        <input type="hidden" asp-for="IdModelo" />
+        <button type="submit" class="btn-peligro">Sí, eliminar</button>
+        <a asp-action="Index" class="btn-secundario">Cancelar</a>
+    </form>
+</div>

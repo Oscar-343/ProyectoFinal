@@ -14,6 +14,7 @@ namespace ProyectoFinal.Controllers
         private readonly TiendaDbContext _context;
         private readonly IColaProduccionService _colaProduccion;
         private readonly IWebHostEnvironment _entorno;
+        private readonly IInventarioService _inventario;
 
         private const decimal PRECIO_POR_HORA = 5m;
 
@@ -23,11 +24,13 @@ namespace ProyectoFinal.Controllers
         public PedidoPersonalizadoController(
             TiendaDbContext context,
             IColaProduccionService colaProduccion,
-            IWebHostEnvironment entorno)
+            IWebHostEnvironment entorno,
+            IInventarioService inventario)
         {
             _context = context;
             _colaProduccion = colaProduccion;
             _entorno = entorno;
+            _inventario = inventario;
         }
 
         // GET: PedidoPersonalizado
@@ -317,6 +320,12 @@ namespace ProyectoFinal.Controllers
 
             var (fechaInicioReal, fechaEntrega) = _colaProduccion.CalcularFechasPedido(vm.FechaInicio, vm.TiempoProduccion);
 
+            // Guarda el estado anterior ANTES de sobreescribirlo. El stock se descuenta
+            // al entrar en producción (ahí es cuando realmente se consume el material),
+            // no al entregar. También cubre el caso de que salte directo de Pendiente
+            // a Entregado sin pasar por EnProduccion.
+            var estadoAnterior = pedido.Estado;
+
             pedido.Cliente = vm.Cliente;
             pedido.NombreReferencia = vm.NombreReferencia;
             pedido.Descripcion = vm.Descripcion;
@@ -331,6 +340,14 @@ namespace ProyectoFinal.Controllers
             pedido.Materiales = nuevosDetalles;
 
             await _context.SaveChangesAsync();
+
+            bool entroAProduccion = estadoAnterior != EstadoPedido.EnProduccion && vm.Estado == EstadoPedido.EnProduccion;
+            bool saltoDirectoAEntregado = estadoAnterior == EstadoPedido.Pendiente && vm.Estado == EstadoPedido.Entregado;
+
+            if (entroAProduccion || saltoDirectoAEntregado)
+            {
+                await _inventario.DescontarStockPedidoPersonalizadoAsync(pedido.IdPedidoPersonalizado);
+            }
 
             TempData["Mensaje"] =
                 $"Pedido personalizado actualizado. Nuevo precio de venta: Bs {precioVenta:0.00}. " +

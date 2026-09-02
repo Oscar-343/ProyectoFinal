@@ -25,7 +25,7 @@
 
             <div class="sidebar-session">
                 <span class="session-dot"></span>
-                Sesión activa: <strong>@ViewBag.NombreUsuario</strong>
+                Sesión activa: <strong>@(Context.Session.GetString("UsuarioLogueado") ?? "Administradora")</strong>
             </div>
 
             <nav class="sidebar-nav">

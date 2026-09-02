@@ -1,74 +1,91 @@
-﻿@model PedidoPersonalizado
+@model PedidoPersonalizado
 
 @{
     ViewData["Title"] = "Detalle del pedido personalizado";
     string estadoClase = Model.Estado.ToString().ToLowerInvariant();
 }
 
-<div class="content-header">
-    <h2>@Model.NombreReferencia</h2>
-    <div>
-        <a class="btn btn-secondary" asp-action="Edit" asp-route-id="@Model.IdPedidoPersonalizado">Editar</a>
-        <a class="btn btn-secondary" asp-action="Index">Volver</a>
+<div class="detalle-header">
+    <h1>@Model.NombreReferencia</h1>
+    <div class="detalle-acciones">
+        <a class="btn-pastel" asp-action="Edit" asp-route-id="@Model.IdPedidoPersonalizado">✏️ Editar</a>
+        <a class="btn-secundario" asp-action="Index">← Volver</a>
     </div>
 </div>
 
-@if (!string.IsNullOrEmpty(Model.Imagen))
-{
-    <img src="@Model.Imagen" alt="@Model.NombreReferencia" style="max-width: 300px; border-radius: 8px; margin-bottom: 16px;" />
-}
+<div class="detalle-box">
+    @if (!string.IsNullOrEmpty(Model.Imagen))
+    {
+        <img src="@Model.Imagen" alt="@Model.NombreReferencia" class="detalle-imagen" />
+    }
 
-<dl class="row">
-    <dt class="col-sm-3">Cliente</dt>
-    <dd class="col-sm-9">@Model.Cliente</dd>
+    <div class="detalle-grid">
+        <div class="detalle-item">
+            <span class="etiqueta">Cliente</span>
+            <span class="valor">@Model.Cliente</span>
+        </div>
+        <div class="detalle-item">
+            <span class="etiqueta">Descripción</span>
+            <span class="valor">@Model.Descripcion</span>
+        </div>
+        <div class="detalle-item">
+            <span class="etiqueta">Dificultad</span>
+            <span class="valor"><span class="badge-dificultad @Model.Dificultad.ToLower()">@Model.Dificultad</span></span>
+        </div>
+        <div class="detalle-item">
+            <span class="etiqueta">Estado</span>
+            <span class="valor"><span class="badge-estado-pedido estado-@estadoClase">@Model.Estado</span></span>
+        </div>
+        <div class="detalle-item">
+            <span class="etiqueta">Fecha de pedido</span>
+            <span class="valor">@Model.FechaPedido.ToString("dd/MM/yyyy HH:mm")</span>
+        </div>
+        <div class="detalle-item">
+            <span class="etiqueta">Fecha de inicio</span>
+            <span class="valor">@Model.FechaInicio.ToString("dd/MM/yyyy HH:mm")</span>
+        </div>
+        <div class="detalle-item">
+            <span class="etiqueta">Fecha de entrega</span>
+            <span class="valor">@Model.FechaEntrega.ToString("dddd dd/MM/yyyy HH:mm")</span>
+        </div>
+        <div class="detalle-item">
+            <span class="etiqueta">Tiempo de producción</span>
+            <span class="valor">@Model.TiempoProduccion horas</span>
+        </div>
+        <div class="detalle-item">
+            <span class="etiqueta">Costo</span>
+            <span class="valor">@Model.Costo.ToString("Bs. ")</span>
+        </div>
+        <div class="detalle-item">
+            <span class="etiqueta">Precio de venta</span>
+            <span class="valor">@Model.PrecioVenta.ToString("Bs. ")</span>
+        </div>
+    </div>
+</div>
 
-    <dt class="col-sm-3">Descripción</dt>
-    <dd class="col-sm-9">@Model.Descripcion</dd>
-
-    <dt class="col-sm-3">Dificultad</dt>
-    <dd class="col-sm-9">@Model.Dificultad</dd>
-
-    <dt class="col-sm-3">Estado</dt>
-    <dd class="col-sm-9"><span class="badge estado-@estadoClase">@Model.Estado</span></dd>
-
-    <dt class="col-sm-3">Fecha de pedido</dt>
-    <dd class="col-sm-9">@Model.FechaPedido.ToString("dd/MM/yyyy HH:mm")</dd>
-
-    <dt class="col-sm-3">Fecha de inicio</dt>
-    <dd class="col-sm-9">@Model.FechaInicio.ToString("dd/MM/yyyy HH:mm")</dd>
-
-    <dt class="col-sm-3">Fecha de entrega</dt>
-    <dd class="col-sm-9">@Model.FechaEntrega.ToString("dddd dd/MM/yyyy HH:mm")</dd>
-
-    <dt class="col-sm-3">Tiempo de producción</dt>
-    <dd class="col-sm-9">@Model.TiempoProduccion horas</dd>
-
-    <dt class="col-sm-3">Costo</dt>
-    <dd class="col-sm-9">@Model.Costo.ToString("Bs. ")</dd>
-
-    <dt class="col-sm-3">Precio de venta</dt>
-    <dd class="col-sm-9">@Model.PrecioVenta.ToString("Bs. ")</dd>
-</dl>
-
-<h4>Materiales usados</h4>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Material</th>
-            <th>Cantidad</th>
-            <th>Precio unitario</th>
-            <th>Subtotal</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var m in Model.Materiales)
-        {
-            <tr>
-                <td>@m.Material?.Nombre</td>
-                <td>@m.Cantidad</td>
-                <td>@(m.Material?.PrecioUnitario.ToString("Bs. ") ?? "-")</td>
-                <td>@((m.Cantidad * (m.Material?.PrecioUnitario ?? 0)).ToString("Bs. "))</td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="detalle-box">
+    <h4 class="detalle-seccion-titulo">Materiales usados</h4>
+    <div class="tabla-responsive">
+        <table class="tabla-pastel">
+            <thead>
+                <tr>
+                    <th>Material</th>
+                    <th>Cantidad</th>
+                    <th>Precio unitario</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var m in Model.Materiales)
+                {
+                    <tr>
+                        <td>@m.Material?.Nombre</td>
+                        <td>@m.Cantidad</td>
+                        <td>@(m.Material?.PrecioUnitario.ToString("Bs. ") ?? "-")</td>
+                        <td>@((m.Cantidad * (m.Material?.PrecioUnitario ?? 0)).ToString("Bs. "))</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -14,6 +14,7 @@ builder.Services.AddDbContext<TiendaDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 builder.Services.AddScoped<IColaProduccionService, ColaProduccionService>();
+builder.Services.AddScoped<IInventarioService, InventarioService>();
 
 // Habilita el uso de Controladores + Vistas
 builder.Services.AddControllersWithViews();
